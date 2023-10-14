@@ -16,10 +16,14 @@ public class SalvoApplication {
 	public CommandLineRunner initData(PlayerRepository playerRepository) {
 		return (args) -> {
 			// save a couple of customers
-			playerRepository.save(new Player("partymix69a@hotmail.com"));
-			playerRepository.save(new Player("jonathan.quiles@outlook.es"));
-			playerRepository.save(new Player("jessibcn@gmail.com"));
-			playerRepository.save(new Player("oriol.furnells@gmail.com"));
+			Player player1 = new Player("partymix69a@hotmail.com");
+			Player player2 = new Player("jonathan.quiles@outlook.es");
+			Player player3 = new Player("jessibcn@gmail.com");
+			Player player4 = new Player("oriol.furnells@gmail.com");
+			playerRepository.save(player1);
+			playerRepository.save(player2);
+			playerRepository.save(player3);
+			playerRepository.save(player4);
 		};
 	}
 
