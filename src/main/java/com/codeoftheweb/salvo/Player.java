@@ -1,14 +1,12 @@
 package com.codeoftheweb.salvo;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 public class Player {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
     private String userName;
@@ -30,4 +28,6 @@ public class Player {
     public void setUserName (String userName) {
         this.userName = userName;
     }
+    @OneToMany(mappedBy = "player", fetch = FetchType.EAGER)
+    Set<GamePlayer> gamePlayers;
 }

@@ -4,9 +4,8 @@ package com.codeoftheweb.salvo;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.Set;
 
 
 @Entity
@@ -15,7 +14,7 @@ public class Game {
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator( name ="native", strategy = "native")
     private long id;
-    private String dateInitial;
+    private Date creationDate;
 
     public Game(){
     }
@@ -27,17 +26,18 @@ public class Game {
         this.id = id;
     }
 
-    public String getDateInitial() {
-        Date dateNoFormat = new Date();
-        String strDateFormat = "yyyy-MM-dd HH:mm:ss";
-        SimpleDateFormat changeFormat = new SimpleDateFormat(strDateFormat);
-        return changeFormat.format(dateNoFormat);
+    public Game(long offset) {
+        Date now = new Date();
+        this.creationDate = Date.from(now.toInstant().plusSeconds(offset));
     }
 
-    public void setDateInitial(LocalDateTime dateInitial) {
+    public Date getCreationDate() {
+        return creationDate;
     }
 
-    public void setDateInitial(String dateInitial) {
-        this.dateInitial = dateInitial;
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
     }
+    @OneToMany(mappedBy = "game", fetch = FetchType.EAGER)
+    Set<GamePlayer> gamePlayers;
 }
