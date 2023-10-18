@@ -1,6 +1,7 @@
 package com.codeoftheweb.salvo;
 
 import javax.persistence.*;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @Entity
@@ -35,11 +36,16 @@ public class GamePlayer {
         this.id = id;
     }
 
-    public Date getJoinDate() {
-        return joinDate;
+    public String getJoinDate() {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return dateFormat.format(joinDate);
     }
 
     public void setJoinDate(Date joinDate) {
         this.joinDate = joinDate;
+    }
+
+    public String getPlayerUserName(){
+        return player.getUserName();
     }
 }
