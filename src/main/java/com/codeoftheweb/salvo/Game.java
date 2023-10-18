@@ -4,6 +4,7 @@ package com.codeoftheweb.salvo;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Set;
 
@@ -17,6 +18,7 @@ public class Game {
     private Date creationDate;
 
     public Game(){
+        this.creationDate = new Date();
     }
     public long getId() {
         return id;
@@ -31,8 +33,10 @@ public class Game {
         this.creationDate = Date.from(now.toInstant().plusSeconds(offset));
     }
 
-    public Date getCreationDate() {
-        return creationDate;
+
+    public String getCreationDate() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return sdf.format(creationDate);
     }
 
     public void setCreationDate(Date creationDate) {
