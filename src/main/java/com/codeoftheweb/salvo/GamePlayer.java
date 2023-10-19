@@ -49,4 +49,11 @@ public class GamePlayer {
         return player.getEmail();
     }
 
+    public Player getPlayer() {
+        return player;
+    }
+    public Game getGame() {
+        return game;
+    }
+
 }
