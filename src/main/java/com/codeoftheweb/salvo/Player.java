@@ -9,24 +9,28 @@ public class Player {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    private String userName;
+    private String email;
 
     public Player() {
+
     }
-    public Player (String userName) {
-        this.userName = userName;
+
+    public Player(String email) {
+        this.email = email;
     }
+
+
     public long getId (){
         return id;
     }
     public void setId (long id) {
         this.id = id;
     }
-    public String getUserName() {
-        return userName;
+    public String getEmail() {
+        return email;
     }
-    public void setUserName (String userName) {
-        this.userName = userName;
+    public void setEmail (String email) {
+        this.email = email;
     }
     @OneToMany(mappedBy = "player", fetch = FetchType.EAGER)
     Set<GamePlayer> gamePlayers;

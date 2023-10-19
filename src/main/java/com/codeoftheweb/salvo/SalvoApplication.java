@@ -20,8 +20,8 @@ public class SalvoApplication {
 			// save a couple of customers
 			Player player1 = new Player("partymix69a@hotmail.com");
 			Player player2 = new Player("jonathan.quiles@outlook.es");
-			Player player3 = new Player("jessibcn@gmail.com");
-			Player player4 = new Player("oriol.furnells@gmail.com");
+			Player player3 = new Player("jonatan.quiles@gmail.com");
+			Player player4 = new Player("jessibcn@gmail.com");
 			playerRepository.save(player1);
 			playerRepository.save(player2);
 			playerRepository.save(player3);

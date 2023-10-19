@@ -45,7 +45,8 @@ public class GamePlayer {
         this.joinDate = joinDate;
     }
 
-    public String getPlayerUserName(){
-        return player.getUserName();
+    public String getPlayerEmail(){
+        return player.getEmail();
     }
+
 }

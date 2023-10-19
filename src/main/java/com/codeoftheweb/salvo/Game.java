@@ -5,7 +5,9 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 
@@ -16,6 +18,7 @@ public class Game {
     @GenericGenerator( name ="native", strategy = "native")
     private long id;
     private Date creationDate;
+
 
     public Game(){
         this.creationDate = new Date();
@@ -44,4 +47,5 @@ public class Game {
     }
     @OneToMany(mappedBy = "game", fetch = FetchType.EAGER)
     Set<GamePlayer> gamePlayers;
+
 }
