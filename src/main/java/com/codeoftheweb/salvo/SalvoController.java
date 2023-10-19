@@ -5,14 +5,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api")
 public class SalvoController {
     @Autowired
     private GameRepository gameRepository ;
-    @RequestMapping
-    public List<Game> getAll() {
-        return gameRepository.findAll();
+    @RequestMapping("/games")
+    public List<Long> getGames(){
+        List<Game> games = gameRepository.findAll();
+        return games.stream()
+                .map(Game::getId)
+                .collect(Collectors.toList());
     }
+
 }
