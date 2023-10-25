@@ -40,8 +40,8 @@ public class SalvoApplication {
 			//create game players 2 x game
 			GamePlayer gamePlayer1 = new GamePlayer(0, game1, player1);
 			GamePlayer gamePlayer2 = new GamePlayer(30, game1, player2);
-			GamePlayer gamePlayer3 = new GamePlayer(1000, game2, player1);
-			GamePlayer gamePlayer4 = new GamePlayer(0, game2, player2);
+			GamePlayer gamePlayer3 = new GamePlayer(1000, game2, player2);
+			GamePlayer gamePlayer4 = new GamePlayer(0, game2, player4);
 			GamePlayer gamePlayer5 = new GamePlayer(450, game3, player3);
 			GamePlayer gamePlayer6 = new GamePlayer(0, game3, player4);
 
