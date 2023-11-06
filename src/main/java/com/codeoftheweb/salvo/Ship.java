@@ -18,17 +18,17 @@ public class Ship {
 
     @ElementCollection
     @Column(name = "shipLocation")
-    private List<String> location = new ArrayList<>();
+    private List<String> shipLocation = new ArrayList<>();
 
     private String shipType;
 
     public Ship(){
     }
 
-    public Ship(String type, GamePlayer gamePlayer, List location){
+    public Ship(String type, GamePlayer gamePlayer, List shipLocation){
         this.shipType = type;
         this.gamePlayer = gamePlayer;
-        this.location = location;
+        this.shipLocation = shipLocation;
     }
 
     public long getId() {
@@ -44,7 +44,7 @@ public class Ship {
     }
 
     public List<String> getLocation() {
-        return location;
+        return shipLocation;
     }
 
     public String getShipType() {
@@ -55,8 +55,8 @@ public class Ship {
         this.gamePlayer = gamePlayer;
     }
 
-    public void setLocation(List<String> location) {
-        this.location = location;
+    public void setLocation(List<String> shipLocation) {
+        this.shipLocation = shipLocation;
     }
 
     public void setShipType(String shipType) {

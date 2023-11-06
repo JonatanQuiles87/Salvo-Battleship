@@ -3,6 +3,8 @@ package com.codeoftheweb.salvo;
 import javax.persistence.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 public class GamePlayer {
@@ -18,6 +20,9 @@ public class GamePlayer {
     @ManyToOne
     @JoinColumn(name = "game_id")
     private Game game;
+
+    @OneToMany(mappedBy = "gamePlayer", fetch = FetchType.EAGER)
+    Set<Ship> ships = new HashSet<>();
 
     public GamePlayer(){
     }
@@ -56,4 +61,11 @@ public class GamePlayer {
         return game;
     }
 
+    public Set<Ship> getShips() {
+        return ships;
+    }
+
+    public void setShips(Set<Ship> ships) {
+        this.ships = ships;
+    }
 }
