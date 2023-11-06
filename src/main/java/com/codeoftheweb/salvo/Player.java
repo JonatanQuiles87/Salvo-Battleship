@@ -34,4 +34,8 @@ public class Player {
     }
     @OneToMany(mappedBy = "player", fetch = FetchType.EAGER)
     Set<GamePlayer> gamePlayers;
+
+    public Set<GamePlayer> getGamePlayers() {
+        return gamePlayers;
+    }
 }
