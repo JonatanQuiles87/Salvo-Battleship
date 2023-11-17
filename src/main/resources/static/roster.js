@@ -5,13 +5,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Function to fetch and display players
     function fetchPlayers() {
-        fetch("/players")
+        fetch("http://localhost:8080/rest/players")
             .then((response) => response.json())
             .then((data) => {
                 playerList.innerHTML = ""; // Clear existing list
                 data._embedded.players.forEach((player) => {
                     const li = document.createElement("li");
-                    li.textContent = player.userName;
+                    li.textContent = player.email;
                     playerList.appendChild(li);
                 });
             })
@@ -25,12 +25,12 @@ document.addEventListener("DOMContentLoaded", function () {
         const newPlayerName = newPlayerInput.value;
         if (newPlayerName) {
             // POST new player to /players
-            fetch("/players", {
+            fetch("http://localhost:8080/rest/players", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ userName: newPlayerName }),
+                body: JSON.stringify({ email: newPlayerName }),
             })
                 .then(() => {
                     // After successful POST, fetch and display players again

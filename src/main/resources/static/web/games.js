@@ -3,15 +3,17 @@ var data;
 gamesCalls();
 
 function gamesCalls() {
-    fetch("/api/games", {
+    fetch("http://localhost:8080/api/games", {
         method: "GET",
         headers: {
-
+            "Content-Type": "application/json",
         }
     })
     .then(function (response) {
         if (response.ok) {
             return response.json();
+        } else {
+            throw new Error('Network response was not ok');
         }
     })
     .then(function (json) {
@@ -28,11 +30,12 @@ function tableGames() {
     var tab = document.getElementById("gamesList");
     for (var i = 0; i < data.length; i++) {
         var list = document.createElement("li");
+        var created = data[i].creationDate
         var players = data[i].gamePlayers;
         var email = players.map(function(player) {
-            return player.player.playerEmail;
+            return player.player.email;
         }).join(", ");
-        list.innerHTML = data[i].created + " : " + email;
+        list.innerHTML = created + " : " + email;
         tab.appendChild(list);
     }
 }
