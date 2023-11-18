@@ -1,4 +1,4 @@
-package com.codeoftheweb.salvo;
+package com.codeoftheweb.salvo.model;
 
 import javax.persistence.*;
 import java.text.SimpleDateFormat;

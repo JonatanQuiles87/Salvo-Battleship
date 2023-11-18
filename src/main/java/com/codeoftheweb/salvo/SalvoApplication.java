@@ -1,5 +1,13 @@
 package com.codeoftheweb.salvo;
 
+import com.codeoftheweb.salvo.model.Game;
+import com.codeoftheweb.salvo.model.GamePlayer;
+import com.codeoftheweb.salvo.model.Player;
+import com.codeoftheweb.salvo.model.Ship;
+import com.codeoftheweb.salvo.repositories.GamePlayerRepository;
+import com.codeoftheweb.salvo.repositories.GameRepository;
+import com.codeoftheweb.salvo.repositories.PlayerRepository;
+import com.codeoftheweb.salvo.repositories.ShipRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

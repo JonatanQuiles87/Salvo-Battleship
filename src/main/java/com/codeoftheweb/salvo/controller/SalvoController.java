@@ -1,6 +1,12 @@
-package com.codeoftheweb.salvo;
+package com.codeoftheweb.salvo.controller;
 
 
+import com.codeoftheweb.salvo.model.Game;
+import com.codeoftheweb.salvo.model.GamePlayer;
+import com.codeoftheweb.salvo.model.Player;
+import com.codeoftheweb.salvo.model.Ship;
+import com.codeoftheweb.salvo.repositories.GamePlayerRepository;
+import com.codeoftheweb.salvo.repositories.GameRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,7 +19,8 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api")
 public class SalvoController {
-    @Autowired GameRepository gameRepository;
+    @Autowired
+    GameRepository gameRepository;
     @Autowired
     private GamePlayerRepository gamePlayerRepository;
     @RequestMapping("/games")

@@ -1,4 +1,6 @@
-package com.codeoftheweb.salvo;
+package com.codeoftheweb.salvo.model;
+
+import com.codeoftheweb.salvo.model.GamePlayer;
 
 import javax.persistence.*;
 import java.util.Set;
