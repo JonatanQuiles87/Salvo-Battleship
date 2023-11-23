@@ -27,7 +27,7 @@ function gamesCalls() {
 
 function tableGames() {
     document.getElementById("Portal").innerHTML = "Salvo Games List";
-    var tab = document.getElementById("gamesList");
+    let tab = document.getElementById("gamesList");
     for (var i = 0; i < data.length; i++) {
         var list = document.createElement("li");
         var created = data[i].creationDate

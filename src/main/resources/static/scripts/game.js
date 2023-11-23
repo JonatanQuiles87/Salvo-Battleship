@@ -1,44 +1,70 @@
-// game.js
 
-// Function to create an empty grid
-function createEmptyGrid(rows, cols) {
-    const grid = document.createElement('table');
-    grid.classList.add('game-grid'); // Add a class for styling purposes
+const params = new Proxy(new URLSearchParams(window.location.search), {
+    get: (searchParams, prop) => searchParams.get(prop),
+});
+const gamePlayerId = params['gp'];
+gamesCalls();
+
+function gamesCalls() {
+    fetch( `http://localhost:8080/api/game_view/${gamePlayerId}`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+        }
+    })
+    .then(function (response) {
+        if (response.ok) {
+            return response.json();
+        } else {
+            throw new Error('Network response was not ok');
+        }
+    })
+    .then(function (json) {
+        let data = json;
+        console.log(data)
+    })
+    .catch(function (error) {
+        console.log("Request failed: " + error.message);
+    });
+}
+
+// Import this function in game.html as a module
+export function createEmptyGrid() {
+    let tab = document.getElementById("game-info"); // Assuming "game-info" is the correct ID
+    let grid = document.createElement("table");
 
     // Create the header row with numbers
-    const headerRow = document.createElement('tr');
-    headerRow.appendChild(document.createElement('th')); // Empty corner cell
-    for (let col = 1; col <= cols; col++) {
-        const th = document.createElement('th');
-        th.textContent = col;
-        headerRow.appendChild(th);
+    let headerRow = document.createElement("tr");
+    headerRow.appendChild(document.createElement("th")); // Empty corner cell
+    for (let i = 1; i <= 10; i++) {
+        let headerCell = document.createElement("th");
+        headerCell.textContent = i;
+        headerRow.appendChild(headerCell);
     }
     grid.appendChild(headerRow);
 
-    // Create rows with letters on the left and empty cells
-    for (let row = 0; row < rows; row++) {
-        const tr = document.createElement('tr');
-        // Create the leftmost cell with letters
-        const th = document.createElement('th');
-        th.textContent = String.fromCharCode(65 + row); // A, B, C, ...
-        tr.appendChild(th);
-        // Create empty cells
-        for (let col = 0; col < cols; col++) {
-            const td = document.createElement('td');
-            tr.appendChild(td);
-        }
-        grid.appendChild(tr);
-    }
+    // Create rows with letters on the left side
+    for (let i = 0; i < 10; i++) {
+        let row = document.createElement("tr");
+        let letterCell = document.createElement("td");
+        letterCell.textContent = String.fromCharCode(65 + i); // ASCII code for 'A' is 65
+        row.appendChild(letterCell);
 
-    return grid;
+        // Create empty cells in each row
+        for (let j = 0; j < 10; j++) {
+            let cell = document.createElement("td");
+            row.appendChild(cell);
+        }
+
+        grid.appendChild(row);
+    }
+     grid.classList.add("game-grid");
+    // Append the grid to the specified element
+    tab.appendChild(grid);
 }
 
-// Execute the function on page load
-document.addEventListener('DOMContentLoaded', function () {
-    // Specify the number of rows and columns for your grid
-    const rows = 10; // Adjust as needed
-    const cols = 10; // Adjust as needed
-
-    // Call the function to create the empty grid and append it to the body
-    document.body.appendChild(createEmptyGrid(rows, cols));
+// Call the function on page load
+window.addEventListener('load', () => {
+    createEmptyGrid();
 });
+
