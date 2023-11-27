@@ -1,6 +1,5 @@
 package com.codeoftheweb.salvo.model;
 
-import com.codeoftheweb.salvo.model.GamePlayer;
 import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 import java.util.ArrayList;
