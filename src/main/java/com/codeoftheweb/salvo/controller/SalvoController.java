@@ -8,9 +8,11 @@ import com.codeoftheweb.salvo.model.Ship;
 import com.codeoftheweb.salvo.repositories.GamePlayerRepository;
 import com.codeoftheweb.salvo.repositories.GameRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -20,7 +22,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/api")
 public class SalvoController {
     @Autowired
-    GameRepository gameRepository;
+    private GameRepository gameRepository;
     @Autowired
     private GamePlayerRepository gamePlayerRepository;
     @RequestMapping("/games")
@@ -33,15 +35,13 @@ public class SalvoController {
     }
     @RequestMapping("/game_view/{gamePlayerId}")
     private Map<String, Object> getGameView(@PathVariable long gamePlayerId) {
-        GamePlayer gamePlayer = gamePlayerRepository.findById(gamePlayerId).orElse(null);
-
-        if (gamePlayer == null) {
-            // Handle the case where the GamePlayer is not found, e.g., return an error response.
-            // You can customize this based on your requirements.
-            return Collections.singletonMap("error", "GamePlayer not found");
-        }
-
-        return makeGameViewDTO(gamePlayer);
+        GamePlayer gamePlayer = this.gamePlayerRepository.findById(gamePlayerId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "There is no GamePlayer found with this id."));
+        Game game = gamePlayer.getGame();
+        Map<String, Object> mapOfGameView = makeGameDTO(game);
+        mapOfGameView.put("gamePlayerId", gamePlayerId);
+        mapOfGameView.put("ships", makeShipsDTO(gamePlayer.getShips()));
+        return new TreeMap<>(mapOfGameView);
     }
 
 
@@ -78,37 +78,17 @@ public class SalvoController {
     }
 
 
-    public Map<String, Object> makeShipsDTO(Ship ship) {
-        Map<String, Object> dto = new LinkedHashMap<String, Object>();
-        dto.put("type", ship.getShipType());
-        dto.put("locations", ship.getShipLocation());
-        return dto;
-    }
-    private List<String> getShipTypes(GamePlayer gamePlayer) {
-        return gamePlayer.getShips()
-                .stream()
-                .map(Ship::getShipType)
+    private List<Object> makeShipsDTO(Set<Ship> ships) {
+        return ships.stream()
+                .map(ship -> {
+                    Map<String, Object> shipMap = new LinkedHashMap<>();
+                    shipMap.put("type", ship.getShipType());
+                    shipMap.put("location", ship.getShipLocation());
+                    return shipMap;
+                })
                 .collect(Collectors.toList());
     }
-    private Map<String, Object> makeGameViewDTO(GamePlayer gamePlayer) {
-        Map<String, Object> dto = new LinkedHashMap<>();
-        dto.put("gameId", gamePlayer.getGame().getId());
-        dto.put("gamePlayerId", gamePlayer.getId());
-        dto.put("created", gamePlayer.getGame().getCreationDate());
-        dto.put("gamePlayers", gamePlayer.getGame().getGamePlayers()
-                .stream()
-                .sorted(Comparator.comparing(GamePlayer::getId))
-                .map(this::makeGamePlayerDTO)
-                .collect(Collectors.toList()));
 
-        List<Map<String, Object>> shipsDTO = gamePlayer.getShips()
-                .stream()
-                .map(this::makeShipsDTO)
-                .collect(Collectors.toList());
-        List<String> shipTypes = getShipTypes(gamePlayer);
-        dto.put("ships", shipsDTO);
 
-        return dto;
-    }
 
 }
