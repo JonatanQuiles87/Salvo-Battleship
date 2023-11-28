@@ -35,9 +35,10 @@ public class SalvoController {
         GamePlayer gamePlayer = this.gamePlayerRepository.findById(gamePlayerId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "There is no GamePlayer found with this id."));
         Game game = gamePlayer.getGame();
-        Map<String, Object> mapOfGameView = makeGameDTO(game);
+        Map<String, Object> mapOfGameView = this.makeGameDTO(game);
         mapOfGameView.put("gamePlayerId", gamePlayerId);
-        mapOfGameView.put("ships", makeShipsDTO(gamePlayer.getShips()));
+        mapOfGameView.put("ships", this.makeShipsDTO(gamePlayer.getShips()));
+        mapOfGameView.put("salvoes", this.makeSalvoesDTO(gamePlayer));
         return new TreeMap<>(mapOfGameView);
     }
 
@@ -79,7 +80,7 @@ public class SalvoController {
         return ships.stream()
                 .map(ship -> {
                     Map<String, Object> shipMap = new LinkedHashMap<>();
-                    shipMap.put("type", ship.getShipType());
+                    shipMap.put("shipType", ship.getShipType());
                     shipMap.put("shipLocations", ship.getShipLocations()
                             .stream()
                             .map(ShipLocation::getGridCell));
@@ -88,6 +89,21 @@ public class SalvoController {
                 .collect(Collectors.toList());
     }
 
+    private Map<Long, Object> makeSalvoesDTO(GamePlayer gamePlayerRequested) {
+        Map<Long, Object> mapOfSalvoes = new HashMap<>();
+        Set<GamePlayer> gamePlayers = gamePlayerRequested.getGame().getGamePlayers();
+        gamePlayers.forEach(gamePlayer ->
+                mapOfSalvoes.put(gamePlayer.getPlayer().getId(), this.makeSalvoTurnsAndLocations(gamePlayer.getSalvoes())));
+        return mapOfSalvoes;
+    }
 
+    private Map<Integer, Object> makeSalvoTurnsAndLocations(Set<Salvo> salvoes) {
+        Map<Integer, Object> mapOfLocations = new HashMap<>();
+        salvoes.forEach(salvo ->
+                mapOfLocations.put(salvo.getTurnNumber(), salvo.getSalvoLocations()
+                        .stream()
+                        .map(SalvoLocation::getGridCell)));
+        return mapOfLocations;
+    }
 
 }
