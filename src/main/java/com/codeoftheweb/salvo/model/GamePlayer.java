@@ -1,5 +1,7 @@
 package com.codeoftheweb.salvo.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -11,6 +13,7 @@ public class GamePlayer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+    @Column(name = "join_date")
     private Date joinDate;
 
     @ManyToOne
@@ -21,17 +24,18 @@ public class GamePlayer {
     @JoinColumn(name = "game_id")
     private Game game;
 
-    @OneToMany(mappedBy = "gamePlayer", fetch = FetchType.EAGER)
+    @JsonIgnore
+    @OneToMany(mappedBy = "gamePlayer")
     Set<Ship> ships = new HashSet<>();
 
     public GamePlayer(){
     }
-    public GamePlayer(long offset, Game game, Player player) {
-        Date now = new Date();
-        this.joinDate = Date.from(now.toInstant().plusSeconds(offset));
+    public GamePlayer(Game game, Player player, Date joinDate) {
+        this.joinDate = joinDate;
         this.game= game;
         this.player= player;
     }
+
 
     public long getId() {
         return id;

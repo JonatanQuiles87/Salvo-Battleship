@@ -1,10 +1,7 @@
 package com.codeoftheweb.salvo.controller;
 
 
-import com.codeoftheweb.salvo.model.Game;
-import com.codeoftheweb.salvo.model.GamePlayer;
-import com.codeoftheweb.salvo.model.Player;
-import com.codeoftheweb.salvo.model.Ship;
+import com.codeoftheweb.salvo.model.*;
 import com.codeoftheweb.salvo.repositories.GamePlayerRepository;
 import com.codeoftheweb.salvo.repositories.GameRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,7 +80,9 @@ public class SalvoController {
                 .map(ship -> {
                     Map<String, Object> shipMap = new LinkedHashMap<>();
                     shipMap.put("type", ship.getShipType());
-                    shipMap.put("location", ship.getShipLocation());
+                    shipMap.put("shipLocations", ship.getShipLocations()
+                            .stream()
+                            .map(ShipLocation::getGridCell));
                     return shipMap;
                 })
                 .collect(Collectors.toList());

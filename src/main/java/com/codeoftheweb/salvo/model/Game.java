@@ -1,21 +1,28 @@
 package com.codeoftheweb.salvo.model;
 
 
+import net.minidev.json.annotate.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 
 @Entity
+@Table(name = "games")
 public class Game {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator( name ="native", strategy = "native")
     private long id;
+    @Column(name = "creation_date")
     private Date creationDate;
+    @JsonIgnore
+    @OneToMany(mappedBy = "game", fetch = FetchType.EAGER)
+    private Set<GamePlayer> gamePlayers = new HashSet<>();
 
 
     public Game(){
@@ -29,9 +36,8 @@ public class Game {
         this.id = id;
     }
 
-    public Game(long offset) {
-        Date now = new Date();
-        this.creationDate = Date.from(now.toInstant().plusSeconds(offset));
+    public Game(Date creationDate) {
+        this.creationDate = creationDate;
     }
 
 
@@ -43,8 +49,6 @@ public class Game {
     public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
     }
-    @OneToMany(mappedBy = "game", fetch = FetchType.EAGER)
-    Set<GamePlayer> gamePlayers;
 
     public Set<GamePlayer> getGamePlayers() {
         return gamePlayers;
