@@ -26,7 +26,12 @@ public class GamePlayer {
 
     @JsonIgnore
     @OneToMany(mappedBy = "gamePlayer")
-    Set<Ship> ships = new HashSet<>();
+    private Set<Ship> ships = new HashSet<>();
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "gamePlayer")
+    private Set<Salvo> salvoes = new HashSet<>();
+
 
     public GamePlayer(){
     }
@@ -58,11 +63,21 @@ public class GamePlayer {
         return player.getEmail();
     }
 
+
     public Player getPlayer() {
         return player;
     }
+
+    public void setPlayer(Player player) {
+        this.player = player;
+    }
+
     public Game getGame() {
         return game;
+    }
+
+    public void setGame(Game game) {
+        this.game = game;
     }
 
     public Set<Ship> getShips() {
@@ -71,5 +86,13 @@ public class GamePlayer {
 
     public void setShips(Set<Ship> ships) {
         this.ships = ships;
+    }
+
+    public Set<Salvo> getSalvoes() {
+        return salvoes;
+    }
+
+    public void setSalvoes(Set<Salvo> salvoes) {
+        this.salvoes = salvoes;
     }
 }
