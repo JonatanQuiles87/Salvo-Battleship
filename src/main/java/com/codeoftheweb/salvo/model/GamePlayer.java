@@ -1,7 +1,6 @@
 package com.codeoftheweb.salvo.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import javax.persistence.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -9,10 +8,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
+@Table(name = "game_players")
 public class GamePlayer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
     @Column(name = "join_date")
     private Date joinDate;
 
@@ -42,7 +42,7 @@ public class GamePlayer {
     }
 
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 

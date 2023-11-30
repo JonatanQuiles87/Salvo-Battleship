@@ -1,6 +1,5 @@
 package com.codeoftheweb.salvo.model;
 
-import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 
@@ -8,9 +7,8 @@ import javax.persistence.*;
 @Table(name = "ship_locations")
 public class ShipLocation {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
-    @GenericGenerator(name = "native", strategy = "native")
-    private long id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "ship_id")
@@ -26,7 +24,7 @@ public class ShipLocation {
         this.gridCell = gridCell;
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 

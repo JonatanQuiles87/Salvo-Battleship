@@ -1,16 +1,13 @@
 package com.codeoftheweb.salvo.model;
 
-import org.hibernate.annotations.GenericGenerator;
-
 import javax.persistence.*;
 
 @Entity
 @Table(name = "salvo_locations")
 public class SalvoLocation {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
-    @GenericGenerator(name = "native", strategy = "native")
-    private long id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Column(name= "grid_cell")
     private String gridCell;
@@ -26,7 +23,7 @@ public class SalvoLocation {
         this.salvo = salvo;
         this.gridCell = gridCell;
     }
-    public long getId() {
+    public Long getId() {
         return id;
     }
 

@@ -1,7 +1,6 @@
 package com.codeoftheweb.salvo.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
@@ -10,9 +9,8 @@ import java.util.Set;
 @Table(name = "ships")
 public class Ship {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
-    @GenericGenerator(name = "native", strategy = "native")
-    private long id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Column
     private String shipType;
@@ -32,7 +30,7 @@ public class Ship {
         this.gamePlayer = gamePlayer;
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 

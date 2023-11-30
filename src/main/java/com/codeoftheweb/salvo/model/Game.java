@@ -1,34 +1,36 @@
 package com.codeoftheweb.salvo.model;
 
 
-import net.minidev.json.annotate.JsonIgnore;
-import org.hibernate.annotations.GenericGenerator;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.*;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 
 @Entity
 @Table(name = "games")
 public class Game {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
-    @GenericGenerator( name ="native", strategy = "native")
-    private long id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     @Column(name = "creation_date")
     private Date creationDate;
+
     @JsonIgnore
-    @OneToMany(mappedBy = "game", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "game")
     private Set<GamePlayer> gamePlayers = new HashSet<>();
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "game")
+    private List<Score> scores = new ArrayList<>();
+
 
 
     public Game(){
-        this.creationDate = new Date();
     }
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
@@ -52,5 +54,17 @@ public class Game {
 
     public Set<GamePlayer> getGamePlayers() {
         return gamePlayers;
+    }
+
+    public void setGamePlayers(Set<GamePlayer> gamePlayers) {
+        this.gamePlayers = gamePlayers;
+    }
+
+    public List<Score> getScores() {
+        return scores;
+    }
+
+    public void setScores(List<Score> scores) {
+        this.scores = scores;
     }
 }
