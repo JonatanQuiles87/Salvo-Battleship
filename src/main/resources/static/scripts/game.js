@@ -22,6 +22,7 @@ const params = new Proxy(new URLSearchParams(window.location.search), {
 const gamePlayerId = params['gp'];
 
 createGrids();
+placeDataOnGrids();
 
 function createGrids() {
     for (let rowNo = 0; rowNo <= gridSize; rowNo++) {
@@ -73,12 +74,14 @@ function nextChar(c) {
     return String.fromCharCode(c.charCodeAt(0) + 1);
 }
 
-if (gamePlayerId !== null) {
+function placeDataOnGrids() {
+    if (gamePlayerId !== null) {
         fetchJson(`/api/game_view/${gamePlayerId}`).then((game) => {
             showGameInfo(game['gamePlayers']);
             placeShipsOnGrid(game['ships']);
             placeSalvoesOnGrids(game['salvoes'], game['gamePlayers']);
         });
+    }
 }
 
 function placeShipsOnGrid(ships) {

@@ -1,41 +1,25 @@
-let data;
+const gamesList = document.getElementById("games-list");
 
-gamesCalls();
-
-function gamesCalls() {
-    fetch("http://localhost:8080/api/games", {
-        method: "GET",
-        headers: {
-            "Content-Type": "application/json",
-        }
-    })
-    .then(function (response) {
+const fetchGames = url =>
+    fetch(url).then(response => {
         if (response.ok) {
             return response.json();
         } else {
-            throw new Error('Network response was not ok');
+            throw new Error('error: ' + response.statusText);
         }
-    })
-    .then(function (json) {
-        data = json;
-        tableGames();
-    })
-    .catch(function (error) {
-        console.log("Request failed: " + error.message);
     });
-}
 
-function tableGames() {
-    document.getElementById("Portal").innerHTML = "Salvo Games List";
-    let tab = document.getElementById("gamesList");
-    for (let i = 0; i < data.length; i++) {
-        let list = document.createElement("li");
-        let created = data[i].creationDate
-        let players = data[i].gamePlayers;
-        let email = players.map(function(player) {
-            return player.player.email;
-        }).join(", ");
-        list.innerHTML = created + " : " + email;
-        tab.appendChild(list);
-    }
+fetchGames('/api/games').then(games => {
+    const gamesInfo = games.map(game =>
+        game['created'].toLocaleString() +
+        game['gamePlayers'].map(gamePlayer => gamePlayer['player']['email']).sort().join(','));
+
+    gamesInfo.forEach(createListOfGamesInfo);
+});
+
+const createListOfGamesInfo = (gameInfo) => {
+    const listItem = document.createElement('li');
+    const listItemText = document.createTextNode(gameInfo);
+    listItem.appendChild(listItemText);
+    gamesList.appendChild(listItem);
 }

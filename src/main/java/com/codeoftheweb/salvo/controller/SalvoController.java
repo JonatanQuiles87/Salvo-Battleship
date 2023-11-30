@@ -46,7 +46,7 @@ public class SalvoController {
     private Map<String, Object> makeGameDTO(Game game) {
         Map<String, Object> dto = new LinkedHashMap<String, Object>();
         dto.put("id", game.getId());
-        dto.put("creationDate", game.getCreationDate());
+        dto.put("created", game.getCreationDate());
         // CREATE A LIST of maps WITH GAME PLAYERS
         List<Object> gamePlayersDTO = game.getGamePlayers()
                 .stream()
