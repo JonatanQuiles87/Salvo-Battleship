@@ -46,7 +46,7 @@ public class GamePlayer {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -62,7 +62,6 @@ public class GamePlayer {
     public String getPlayerEmail(){
         return player.getEmail();
     }
-
 
     public Player getPlayer() {
         return player;
