@@ -31,7 +31,7 @@ public class SalvoController {
                 .collect(Collectors.toList());
     }
     @RequestMapping("/game_view/{gamePlayerId}")
-    private Map<String, Object> getGameView(@PathVariable long gamePlayerId) {
+    private Map<String, Object> getGameView(@PathVariable Long gamePlayerId) {
         GamePlayer gamePlayer = this.gamePlayerRepository.findById(gamePlayerId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "There is no GamePlayer found with this id."));
         Game game = gamePlayer.getGame();
@@ -61,6 +61,7 @@ public class SalvoController {
         Map<String, Object> dto = new LinkedHashMap<String, Object>();
         dto.put("id", gamePlayer.getId());
         dto.put("player", makePlayersDTO(gamePlayer.getPlayer()));
+        dto.put("score", this.gamePlayerScore(gamePlayer));
 
         return dto;
     }
@@ -75,6 +76,14 @@ public class SalvoController {
 
     }
 
+    private Double gamePlayerScore(GamePlayer gamePlayer) {
+        List<Score> scoresOfGame = gamePlayer.getGame().getScores();
+        Long playerId = gamePlayer.getPlayer().getId();
+        Optional<Score> scoreOfGamePlayer = scoresOfGame.stream()
+                .filter(score -> Objects.equals(score.getPlayer().getId(), playerId))
+                .findFirst();
+        return scoreOfGamePlayer.map(Score::getScore).orElse(null);
+    }
 
     private List<Object> makeShipsDTO(Set<Ship> ships) {
         return ships.stream()
