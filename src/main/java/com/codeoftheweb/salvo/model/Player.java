@@ -1,6 +1,7 @@
 package com.codeoftheweb.salvo.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -17,6 +18,9 @@ public class Player {
     @Column(unique = true)
     private String email;
 
+    @Column(name = "password")
+    private String password;
+
     @JsonIgnore
     @OneToMany(mappedBy = "player")
     private Set<GamePlayer> gamePlayers = new HashSet<>();
@@ -29,8 +33,9 @@ public class Player {
 
     }
 
-    public Player(String email) {
+    public Player(String email, String password) {
         this.email = email;
+        this.password = password;
     }
 
 
@@ -45,6 +50,14 @@ public class Player {
     }
     public void setEmail (String email) {
         this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public Set<GamePlayer> getGamePlayers() {

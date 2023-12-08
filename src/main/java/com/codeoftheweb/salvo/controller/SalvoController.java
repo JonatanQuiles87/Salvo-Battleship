@@ -4,6 +4,7 @@ package com.codeoftheweb.salvo.controller;
 import com.codeoftheweb.salvo.model.*;
 import com.codeoftheweb.salvo.repositories.GamePlayerRepository;
 import com.codeoftheweb.salvo.repositories.GameRepository;
+import com.codeoftheweb.salvo.repositories.PlayerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,6 +23,8 @@ public class SalvoController {
     private GameRepository gameRepository;
     @Autowired
     private GamePlayerRepository gamePlayerRepository;
+    @Autowired
+    private PlayerRepository playerRepository;
     @RequestMapping("/games")
     private List<Object> getGames() {
         return gameRepository
