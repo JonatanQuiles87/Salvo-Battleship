@@ -7,6 +7,8 @@ import com.codeoftheweb.salvo.repositories.GameRepository;
 import com.codeoftheweb.salvo.repositories.PlayerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -116,6 +118,14 @@ public class SalvoController {
                         .stream()
                         .map(SalvoLocation::getGridCell)));
         return mapOfLocations;
+    }
+
+    @RequestMapping("/player")
+    public Player getAll(Authentication authentication) {
+        return playerRepository.findByEmail(authentication.getName());
+    }
+    private boolean isGuest(Authentication authentication) {
+        return authentication == null || authentication instanceof AnonymousAuthenticationToken;
     }
 
 }
