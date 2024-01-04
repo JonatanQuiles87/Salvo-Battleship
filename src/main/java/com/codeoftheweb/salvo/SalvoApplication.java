@@ -388,9 +388,6 @@ public class SalvoApplication extends SpringBootServletInitializer {
 class WebSecurityConfiguration extends GlobalAuthenticationConfigurerAdapter {
 
 	@Autowired
-	PasswordEncoder passwordEncoder;
-
-	@Autowired
 	PlayerRepository playerRepository;
 
 	@Override
