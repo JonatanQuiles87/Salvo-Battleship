@@ -75,7 +75,7 @@ public class SalvoController {
     private Map<String, Object> makePlayersDTO(Player player) {
         Map<String, Object> dto = new LinkedHashMap<String, Object>();
         dto.put("id", player.getId());
-        dto.put("email", player.getEmail());
+        dto.put("userName", player.getUserName());
         return dto;
 
 
@@ -122,7 +122,7 @@ public class SalvoController {
 
     @RequestMapping("/player")
     public Player getAll(Authentication authentication) {
-        return playerRepository.findByEmail(authentication.getName());
+        return playerRepository.findByUserName(authentication.getName());
     }
     private boolean isGuest(Authentication authentication) {
         return authentication == null || authentication instanceof AnonymousAuthenticationToken;

@@ -95,9 +95,9 @@ function placeShipsOnGrid(ships) {
 
 function showGameInfo(gamePlayers) {
     const gamePlayerOwner = gamePlayers.find(({id}) => id.toString() === gamePlayerId);
-    const ownerUsername = gamePlayerOwner['player']['email'];
+    const ownerUsername = gamePlayerOwner['player']['userName'];
     const gamePlayerOpponent = gamePlayers.find(({id}) => id.toString() !== gamePlayerId);
-    const opponentUsername = gamePlayerOpponent === undefined ? '"waiting_for_opponent"' : gamePlayerOpponent['player']['email'];
+    const opponentUsername = gamePlayerOpponent === undefined ? '"waiting_for_opponent"' : gamePlayerOpponent['player']['userName'];
 
     const gameInfoTextField = document.querySelector('#game-info');
     const gameInfoText = document.createTextNode(`${ownerUsername} (you) vs ${opponentUsername}`);

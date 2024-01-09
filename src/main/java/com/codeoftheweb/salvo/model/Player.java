@@ -16,7 +16,7 @@ public class Player {
     private Long id;
 
     @Column(unique = true)
-    private String email;
+    private String userName;
 
     @Column(name = "password")
     private String password;
@@ -33,8 +33,8 @@ public class Player {
 
     }
 
-    public Player(String email, String password) {
-        this.email = email;
+    public Player(String userName, String password) {
+        this.userName = userName;
         this.password = password;
     }
 
@@ -45,11 +45,11 @@ public class Player {
     public void setId (long id) {
         this.id = id;
     }
-    public String getEmail() {
-        return email;
+    public String getUserName() {
+        return userName;
     }
-    public void setEmail (String email) {
-        this.email = email;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public String getPassword() {

@@ -17,7 +17,7 @@ const fetchedGameInfo = await fetchJson('/api/games'); //Top level await. No nee
 const briefGameInfo = (games) => {
     return games.map(game =>
         game['created'].toLocaleString() + ', ' +
-        game['gamePlayers'].map(gamePlayer => gamePlayer['player']['email']).sort().join(', '));
+        game['gamePlayers'].map(gamePlayer => gamePlayer['player']['userName']).sort().join(', '));
 }
 briefGameInfo(fetchedGameInfo).forEach(createHtmlListOfGames);
 
@@ -59,10 +59,10 @@ function createLeaderboardTable(player) {
 
 function createPlayerListFromJson(games) {
     return games.reduce((playerList, {gamePlayers}) => {
-        gamePlayers.map(({player}) => player['email'])
-            .forEach(email => {
-                if (!playerList.includes(email)) {
-                    playerList.push(email);
+        gamePlayers.map(({player}) => player['userName'])
+            .forEach(userName => {
+                if (!playerList.includes(userName)) {
+                    playerList.push(userName);
                 }
             });
         return playerList;
@@ -72,7 +72,7 @@ function createPlayerListFromJson(games) {
 function getTotalScoreOfPlayer(playerUsername, games) {
     return games.reduce((totalScore, {gamePlayers}) => {
         gamePlayers.forEach(gamePlayer => {
-            if (gamePlayer['player']['email'] === playerUsername) {
+            if (gamePlayer['player']['userName'] === playerUsername) {
                 totalScore += gamePlayer['score'];
             }
         })
@@ -96,7 +96,7 @@ function resultCounter(playerUsername, games, resultType) {
     const score = resultType === 'win' ? 1.0 : resultType === 'tie' ? 0.5 : 0.0;
     return games.reduce((counter, {gamePlayers}) => {
         gamePlayers.forEach(gamePlayer => {
-            if (gamePlayer['player']['email'] === playerUsername && gamePlayer['score'] === score) {
+            if (gamePlayer['player']['userName'] === playerUsername && gamePlayer['score'] === score) {
                 counter += 1;
             }
         });

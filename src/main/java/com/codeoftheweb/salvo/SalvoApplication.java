@@ -392,12 +392,12 @@ class WebSecurityConfiguration extends GlobalAuthenticationConfigurerAdapter {
 
 	@Override
 	public void init(AuthenticationManagerBuilder auth) throws Exception {
-		auth.userDetailsService(email -> {
-			Player player = playerRepository.findByEmail(email);
+		auth.userDetailsService(userName -> {
+			Player player = playerRepository.findByUserName(userName);
 			if(player != null) {
-				return new User(player.getEmail(), player.getPassword(), AuthorityUtils.createAuthorityList("USER"));
+				return new User(player.getUserName(), player.getPassword(), AuthorityUtils.createAuthorityList("USER"));
 			} else {
-				throw new UsernameNotFoundException("Unknown user " + email);
+				throw new UsernameNotFoundException("Unknown user " + userName);
 			}
 		});
 	}
@@ -418,7 +418,7 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.formLogin();
 
 		http.formLogin()
-				.usernameParameter("email")
+				.usernameParameter("username")
 				.passwordParameter("password")
 				.loginPage("/api/login")
 				.defaultSuccessUrl("/web/games")
