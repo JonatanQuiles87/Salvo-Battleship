@@ -1,6 +1,10 @@
 package com.codeoftheweb.salvo.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import javax.persistence.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -9,10 +13,15 @@ import java.util.Set;
 
 @Entity
 @Table(name = "game_players")
+@Getter
+@Setter
+@NoArgsConstructor
+
 public class GamePlayer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(name = "join_date")
     private Date joinDate;
 
@@ -32,22 +41,10 @@ public class GamePlayer {
     @OneToMany(mappedBy = "gamePlayer")
     private Set<Salvo> salvoes = new HashSet<>();
 
-
-    public GamePlayer(){
-    }
     public GamePlayer(Game game, Player player, Date joinDate) {
         this.joinDate = joinDate;
         this.game= game;
         this.player= player;
-    }
-
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getJoinDate() {
@@ -55,43 +52,4 @@ public class GamePlayer {
         return dateFormat.format(joinDate);
     }
 
-    public void setJoinDate(Date joinDate) {
-        this.joinDate = joinDate;
-    }
-
-    public String getPlayerUserName(){
-        return player.getUserName();
-    }
-
-    public Player getPlayer() {
-        return player;
-    }
-
-    public void setPlayer(Player player) {
-        this.player = player;
-    }
-
-    public Game getGame() {
-        return game;
-    }
-
-    public void setGame(Game game) {
-        this.game = game;
-    }
-
-    public Set<Ship> getShips() {
-        return ships;
-    }
-
-    public void setShips(Set<Ship> ships) {
-        this.ships = ships;
-    }
-
-    public Set<Salvo> getSalvoes() {
-        return salvoes;
-    }
-
-    public void setSalvoes(Set<Salvo> salvoes) {
-        this.salvoes = salvoes;
-    }
 }

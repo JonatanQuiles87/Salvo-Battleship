@@ -1,12 +1,20 @@
 package com.codeoftheweb.salvo.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
 @Table(name = "ships")
+@Getter
+@Setter
+@NoArgsConstructor
+
 public class Ship {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -14,6 +22,7 @@ public class Ship {
 
     @Column
     private String shipType;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "gamePlayer_id")
     private GamePlayer gamePlayer;
@@ -22,44 +31,8 @@ public class Ship {
     @OneToMany(mappedBy = "ship")
     private Set<ShipLocation> shipLocations = new HashSet<>();
 
-    public Ship(){
-    }
-
-    public Ship(String type, GamePlayer gamePlayer){
-        this.shipType = type;
-        this.gamePlayer = gamePlayer;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public GamePlayer getGamePlayer() {
-        return gamePlayer;
-    }
-
-
-    public String getShipType() {
-        return shipType;
-    }
-
-    public void setGamePlayer(GamePlayer gamePlayer) {
-        this.gamePlayer = gamePlayer;
-    }
-
-    public void setShipType(String shipType) {
+    public Ship(String shipType, GamePlayer gamePlayer){
         this.shipType = shipType;
-    }
-
-    public Set<ShipLocation> getShipLocations() {
-        return shipLocations;
-    }
-
-    public void setShipLocation(Set<ShipLocation> shipLocations) {
-        this.shipLocations = shipLocations;
+        this.gamePlayer = gamePlayer;
     }
 }
