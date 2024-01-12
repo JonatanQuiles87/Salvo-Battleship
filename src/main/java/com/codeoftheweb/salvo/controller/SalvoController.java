@@ -49,7 +49,7 @@ public class SalvoController {
 
 
     private Map<String, Object> makeGameDTO(Game game) {
-        Map<String, Object> dto = new LinkedHashMap<String, Object>();
+        Map<String, Object> dto = new LinkedHashMap<>();
         dto.put("id", game.getId());
         dto.put("created", game.getCreationDate());
         // CREATE A LIST of maps WITH GAME PLAYERS
@@ -63,7 +63,7 @@ public class SalvoController {
     }
 
     private Map<String, Object> makeGamePlayerDTO(GamePlayer gamePlayer) {
-        Map<String, Object> dto = new LinkedHashMap<String, Object>();
+        Map<String, Object> dto = new LinkedHashMap<>();
         dto.put("id", gamePlayer.getId());
         dto.put("player", makePlayersDTO(gamePlayer.getPlayer()));
         dto.put("score", this.gamePlayerScore(gamePlayer));
@@ -73,7 +73,7 @@ public class SalvoController {
 
 
     private Map<String, Object> makePlayersDTO(Player player) {
-        Map<String, Object> dto = new LinkedHashMap<String, Object>();
+        Map<String, Object> dto = new LinkedHashMap<>();
         dto.put("id", player.getId());
         dto.put("userName", player.getUserName());
         return dto;
