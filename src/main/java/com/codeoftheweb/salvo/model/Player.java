@@ -25,11 +25,9 @@ public class Player {
     @Column(unique = true)
     private String userName;
 
-    @Setter
     @Column(name = "password")
     private String password;
 
-    @Setter
     @JsonIgnore
     @OneToMany(mappedBy = "player")
     private Set<GamePlayer> gamePlayers = new HashSet<>();
