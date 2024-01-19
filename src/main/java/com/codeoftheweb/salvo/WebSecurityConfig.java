@@ -20,26 +20,25 @@ public class WebSecurityConfig extends SecurityConfigurerAdapter<DefaultSecurity
 	public void configure(HttpSecurity http) throws Exception {
 		String[] whiteList = {"/web/games.html", "/scripts/**", "/rest/**", "/api/games", "/api/login", "/styles/**"};
 
+		http.formLogin()
+				.loginProcessingUrl("/login")
+				.successHandler((req, res, auth) -> clearAuthenticationAttributes(req))
+				.failureHandler((req, res, exc) -> res.sendError(HttpServletResponse.SC_UNAUTHORIZED));
+
+		http.logout()
+				.logoutUrl("/logout")
+				.logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler());
+
 		http.authorizeRequests()
 				.antMatchers(whiteList).permitAll()
-				.antMatchers("/**").hasAuthority("USER")
-				.and()
-				.formLogin()
-				.loginPage("/api/login")
-				.loginProcessingUrl("/api/login")
-				.defaultSuccessUrl("/web/games")
-				.usernameParameter("username")
-				.passwordParameter("password")
-				.successHandler((req, res, auth) -> clearAuthenticationAttributes(req))
-				.failureHandler((req, res, exc) -> res.sendError(HttpServletResponse.SC_UNAUTHORIZED))
-				.and()
-				.logout()
-				.logoutUrl("/api/logout")
-				.logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler())
-				.and()
-				.csrf().disable()
-				.exceptionHandling()
-				.authenticationEntryPoint((req, res, exc) -> res.sendError(HttpServletResponse.SC_UNAUTHORIZED));
+				.antMatchers("/admin/**").hasAuthority("ADMIN")
+				.antMatchers("/users/**").hasAnyAuthority("ADMIN", "USER")
+				.antMatchers("/**").permitAll();
+
+		http.csrf().disable();
+
+		http.exceptionHandling().authenticationEntryPoint((req, res, exc) ->
+				res.sendError(HttpServletResponse.SC_UNAUTHORIZED));
 	}
 
 	private void clearAuthenticationAttributes(HttpServletRequest request) {
