@@ -8,7 +8,6 @@ import com.codeoftheweb.salvo.repositories.PlayerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -122,12 +121,9 @@ public class SalvoController {
         return mapOfLocations;
     }
 
-    @RequestMapping("/player")
+    @RequestMapping("/players")
     public Player getAll(Authentication authentication) {
         return playerRepository.findByUserName(authentication.getName());
-    }
-    private boolean isGuest(Authentication authentication) {
-        return authentication == null || authentication instanceof AnonymousAuthenticationToken;
     }
     @RequestMapping(path = "/players", method = RequestMethod.POST)
     public ResponseEntity<Object> createPlayer(
