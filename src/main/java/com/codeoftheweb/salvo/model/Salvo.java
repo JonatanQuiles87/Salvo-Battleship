@@ -1,12 +1,20 @@
 package com.codeoftheweb.salvo.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "salvoes")
+@Getter
+@Setter
+@NoArgsConstructor
+
 public class Salvo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,44 +29,10 @@ public class Salvo {
 
     @JsonIgnore
     @OneToMany(mappedBy = "salvo")
-    private List<SalvoLocation> salvoLocations = new ArrayList<>();
+    private Set<SalvoLocation> salvoLocations = new HashSet<>();
 
-    public Salvo(){
-    }
     public Salvo(GamePlayer gamePlayer, Integer turnNumber){
         this.gamePlayer = gamePlayer;
         this.turnNumber = turnNumber;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public GamePlayer getGamePlayer() {
-        return gamePlayer;
-    }
-
-    public void setGamePlayer(GamePlayer gamePlayer) {
-        this.gamePlayer = gamePlayer;
-    }
-
-    public Integer getTurnNumber() {
-        return turnNumber;
-    }
-
-    public void setTurnNumber(Integer turnNumber) {
-        this.turnNumber = turnNumber;
-    }
-
-    public List<SalvoLocation> getSalvoLocations() {
-        return salvoLocations;
-    }
-
-    public void setSalvoLocations(List<SalvoLocation> salvoLocations) {
-        this.salvoLocations = salvoLocations;
     }
 }

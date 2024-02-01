@@ -1,11 +1,19 @@
 package com.codeoftheweb.salvo.model;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import javax.persistence.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @Entity
 @Table(name = "scores")
+@Getter
+@Setter
+@NoArgsConstructor
+
 public class Score {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,8 +33,6 @@ public class Score {
     @Column(name = "finish_date")
     private Date finishDate;
 
-    public Score(){}
-
     public Score (Game game, Player player, Double score, Date finishDate) {
         this.game = game;
         this.player = player;
@@ -34,44 +40,8 @@ public class Score {
         this.finishDate = finishDate;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public Game getGame() {
-        return game;
-    }
-
-    public void setGame(Game game) {
-        this.game = game;
-    }
-
-    public Player getPlayer() {
-        return player;
-    }
-
-    public void setPlayer(Player player) {
-        this.player = player;
-    }
-
-    public Double getScore() {
-        return score;
-    }
-
-    public void setScore(Double score) {
-        this.score = score;
-    }
-
     public String getFinishDate() {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         return sdf.format(finishDate);
-    }
-
-    public void setFinishDate(Date finishDate) {
-        this.finishDate = finishDate;
     }
 }

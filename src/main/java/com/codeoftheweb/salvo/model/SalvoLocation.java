@@ -1,9 +1,17 @@
 package com.codeoftheweb.salvo.model;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import javax.persistence.*;
 
 @Entity
 @Table(name = "salvo_locations")
+@Getter
+@Setter
+@NoArgsConstructor
+
 public class SalvoLocation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,34 +24,8 @@ public class SalvoLocation {
     @JoinColumn(name = "salvo_id")
     private Salvo salvo;
 
-    public SalvoLocation(){
-    }
-
     public SalvoLocation(Salvo salvo, String gridCell){
         this.salvo = salvo;
-        this.gridCell = gridCell;
-    }
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public Salvo getSalvo() {
-        return salvo;
-    }
-
-    public void setSalvo(Salvo salvo) {
-        this.salvo = salvo;
-    }
-
-    public String getGridCell() {
-        return gridCell;
-    }
-
-    public void setGridCell(String gridCell) {
         this.gridCell = gridCell;
     }
 }
