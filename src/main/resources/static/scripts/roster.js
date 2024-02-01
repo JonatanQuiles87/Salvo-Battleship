@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 playerList.innerHTML = ""; // Clear existing list
                 data._embedded.players.forEach((player) => {
                     const li = document.createElement("li");
-                    li.textContent = player.userName;
+                    li.textContent = player.email;
                     playerList.appendChild(li);
                 });
             })
@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ userName: newPlayerName }),
+                body: JSON.stringify({ email: newPlayerName }),
             })
                 .then(() => {
                     // After successful POST, fetch and display players again
