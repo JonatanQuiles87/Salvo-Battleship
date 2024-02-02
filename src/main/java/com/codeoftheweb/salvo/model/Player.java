@@ -14,8 +14,8 @@ public class Player {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true)
-    private String email;
+    @Column(name = "username", unique = true)
+    private String username;
 
     @JsonIgnore
     @OneToMany(mappedBy = "player")
@@ -29,8 +29,8 @@ public class Player {
 
     }
 
-    public Player(String email) {
-        this.email = email;
+    public Player(String username) {
+        this.username = username;
     }
 
 
@@ -40,11 +40,11 @@ public class Player {
     public void setId (long id) {
         this.id = id;
     }
-    public String getEmail() {
-        return email;
+    public String getUsername() {
+        return username;
     }
-    public void setEmail (String email) {
-        this.email = email;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public Set<GamePlayer> getGamePlayers() {
