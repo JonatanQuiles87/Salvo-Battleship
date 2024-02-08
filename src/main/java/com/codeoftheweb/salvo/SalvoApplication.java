@@ -2,28 +2,51 @@ package com.codeoftheweb.salvo;
 
 import com.codeoftheweb.salvo.model.*;
 import com.codeoftheweb.salvo.repositories.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.authentication.configuration.GlobalAuthenticationConfigurerAdapter;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.WebAttributes;
+import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.util.*;
 
 @SpringBootApplication
-public class SalvoApplication {
+public class SalvoApplication extends SpringBootServletInitializer {
 
 	public static void main(String[] args) {
 		SpringApplication.run(SalvoApplication.class, args);
 	}
 
 	@Bean
+	PasswordEncoder passwordEncoder() {
+		return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+	}
+
+	@Bean
 	public CommandLineRunner initData(PlayerRepository playerRepository, GameRepository gameRepository, GamePlayerRepository gamePlayerRepository, ShipRepository shipRepository, ShipLocationRepository shipLocationRepository, SalvoRepository salvoRepository, SalvoLocationRepository salvoLocationRepository, ScoreRepository scoreRepository) {
 		return (args) -> {
 			// Players
-			Player player1 = new Player("j.bauer@ctu.gov", "24");
-			Player player2 = new Player("c.obrian@ctu.gov", "42");
-			Player player3 = new Player("kim_bauer@gmail.com", "kb");
-			Player player4 = new Player("t.almeida@ctu.gov", "mole");
+			Player player1 = new Player("j.bauer@ctu.gov", passwordEncoder().encode("24"));
+			Player player2 = new Player("c.obrian@ctu.gov", passwordEncoder().encode("42"));
+			Player player3 = new Player("kim_bauer@gmail.com", passwordEncoder().encode("kb"));
+			Player player4 = new Player("t.almeida@ctu.gov", passwordEncoder().encode("mole"));
 			playerRepository.save(player1);
 			playerRepository.save(player2);
 			playerRepository.save(player3);
@@ -254,13 +277,27 @@ public class SalvoApplication {
 			Salvo salvo19 = new Salvo(gamePlayer9, 2);
 			Salvo salvo20 = new Salvo(gamePlayer10, 2);
 			Salvo salvo21 = new Salvo(gamePlayer10, 3);
-			salvoRepository.save(salvo1); salvoRepository.save(salvo2); salvoRepository.save(salvo3);
-			salvoRepository.save(salvo4); salvoRepository.save(salvo5); salvoRepository.save(salvo6);
-			salvoRepository.save(salvo7); salvoRepository.save(salvo8); salvoRepository.save(salvo9);
-			salvoRepository.save(salvo10); salvoRepository.save(salvo11); salvoRepository.save(salvo12);
-			salvoRepository.save(salvo13); salvoRepository.save(salvo14); salvoRepository.save(salvo15);
-			salvoRepository.save(salvo16); salvoRepository.save(salvo17); salvoRepository.save(salvo18);
-			salvoRepository.save(salvo19); salvoRepository.save(salvo20); salvoRepository.save(salvo21);
+			salvoRepository.save(salvo1);
+			salvoRepository.save(salvo2);
+			salvoRepository.save(salvo3);
+			salvoRepository.save(salvo4);
+			salvoRepository.save(salvo5);
+			salvoRepository.save(salvo6);
+			salvoRepository.save(salvo7);
+			salvoRepository.save(salvo8);
+			salvoRepository.save(salvo9);
+			salvoRepository.save(salvo10);
+			salvoRepository.save(salvo11);
+			salvoRepository.save(salvo12);
+			salvoRepository.save(salvo13);
+			salvoRepository.save(salvo14);
+			salvoRepository.save(salvo15);
+			salvoRepository.save(salvo16);
+			salvoRepository.save(salvo17);
+			salvoRepository.save(salvo18);
+			salvoRepository.save(salvo19);
+			salvoRepository.save(salvo20);
+			salvoRepository.save(salvo21);
 
 			// SALVO LOCATIONS
 			List<SalvoLocation> salvoLocations = new ArrayList<>();
@@ -359,5 +396,62 @@ public class SalvoApplication {
 			scoreRepository.saveAll(scores);
 		};
 	}
+}
 
+@Configuration
+class WebSecurityConfiguration extends GlobalAuthenticationConfigurerAdapter {
+
+	@Autowired
+	private PlayerRepository playerRepository;
+
+	@Override
+	public void init (AuthenticationManagerBuilder auth) throws Exception {
+		auth.userDetailsService(username -> {
+			Player player = playerRepository.findByUsername(username)
+					.orElseThrow(() -> new UsernameNotFoundException("Username does not exist"));
+			return new User(player.getUsername(), player.getPassword(), AuthorityUtils.createAuthorityList("USER"));
+		});
+	}
+}
+
+@Configuration
+@EnableWebSecurity
+class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+
+	@Override
+	protected void configure(HttpSecurity http) throws Exception {
+		String[] whiteList = {"/web/games.html", "/scripts/**", "/rest/**", "/api/games", "/api/login", "/web/login.html"};
+
+		http.authorizeRequests()
+				.antMatchers(whiteList).permitAll()
+				.antMatchers("/**").hasAuthority("USER")
+				.and()
+				.formLogin();
+
+		http.formLogin()
+				.usernameParameter("username")
+				.passwordParameter("password")
+				.loginPage("/web/login.html")
+				.defaultSuccessUrl("/web/games")
+				.loginProcessingUrl("/api/login");
+
+		http.logout().logoutUrl("/api/logout");
+
+		http.csrf().disable();
+
+		http.exceptionHandling().authenticationEntryPoint((req, res, exc) -> res.sendError(HttpServletResponse.SC_UNAUTHORIZED));
+
+		http.formLogin().successHandler((req, res, auth) -> clearAuthenticationAttributes(req));
+
+		http.formLogin().failureHandler((req, res, exc) -> res.sendError(HttpServletResponse.SC_UNAUTHORIZED));
+
+		http.logout().logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler());
+
+	}
+	private void clearAuthenticationAttributes(HttpServletRequest request) {
+		HttpSession session = request.getSession(false);
+		if (session != null) {
+			session.removeAttribute(WebAttributes.AUTHENTICATION_EXCEPTION);
+		}
+	}
 }
