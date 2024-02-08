@@ -1,25 +1,30 @@
-const domainUrl = 'http://localhost:8080';
-
-const fetchJson = url =>
-    fetch(domainUrl + url).then(response => {
-        if (response.ok) {
-            return response.json();
-        } else {
-            throw new Error('error: ' + response.statusText);
-        }
-    });
+import {fetchJson, login} from "./utilities/helpers.js";
 
 const leaderboard = document.querySelector('#leaderboard');
 const gamesList = document.getElementById("games-list");
-const fetchedGameInfo = await fetchJson('/api/games'); //Top level await. No need to be in async function.
+const loggedInPlayerUsernameArea = document.getElementById("logged-in-player");
+const fetchedGamesObject = await fetchJson('/api/games'); //Top level await. No need to be in async function.
+const fetchedGamesList = fetchedGamesObject['games'];
+const loggedInPlayerUsername = fetchedGamesObject['player']['username'];
 
+
+document.querySelector('#login-btn').addEventListener('click', evt => login(evt));
+
+const showPlayerUsername = (username) => {
+    const usernameText = document.createTextNode(username);
+    loggedInPlayerUsernameArea.appendChild(usernameText);
+}
+
+if(loggedInPlayerUsername) {
+    showPlayerUsername(loggedInPlayerUsername);
+}
 
 const briefGameInfo = (games) => {
     return games.map(game =>
         game['created'].toLocaleString() + ', ' +
         game['gamePlayers'].map(gamePlayer => gamePlayer['player']['username']).sort().join(', '));
 }
-briefGameInfo(fetchedGameInfo).forEach(createHtmlListOfGames);
+briefGameInfo(fetchedGamesList).forEach(createHtmlListOfGames);
 
 const scoresOfPlayers = (games) => {
     const playerList = createPlayerListFromJson(games);
@@ -36,7 +41,7 @@ const scoresOfPlayers = (games) => {
     }, []).sort((firstPlayer, secondPlayer) => secondPlayer['total'] - firstPlayer['total']);
 }
 console.log('scoresOfPlayers', scoresOfPlayers(fetchedGameInfo));
-scoresOfPlayers(fetchedGameInfo).forEach(createLeaderboardTable);
+scoresOfPlayers(fetchedGamesList).forEach(createLeaderboardTable);
 
 
 function createHtmlListOfGames(gameInfo) {

@@ -6,9 +6,20 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Salvo!</title>
+    <link href="../styles/games.css" rel="stylesheet">
     <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
+<div class="games-container">
+    <div>
+        <form onsubmit="return false;">
+            <label>Username: <input type="text" name="username" id="username" placeholder="name@example.com"></label>
+            <label>Password: <input type="text" name="password" id="password" placeholder="123"></label>
+            <button id="login-btn">Login</button>
+            <span id="login-result"></span>
+        </form>
+    </div>
+    <h4 id="logged-in-player"></h4>
     <div>
         <h3>Games</h3>
         <ol id="games-list"></ol>
