@@ -1,16 +1,66 @@
 <!DOCTYPE html>
-<html lang = eng>
+<html lang="en">
 <head>
-    <title>Player Roster</title>
+    <meta charset="UTF-8">
+    <title>Salvo App</title>
 </head>
 <body>
 <h1>Player Roster</h1>
-<label for="new-player">Add New Player:</label>
-<input type="text" id="new-player" placeholder="Enter player email">
-<button id="add-player">Add</button>
-<ul id="player-list">
-    <!-- Player list will be added here -->
-</ul>
-<script src="../scripts/roster.js"></script>
+<div>
+    <label for="newPlayer">New Player&#58;
+        <input type="text" name="newPlayer" id="newPlayer" placeholder="lala@lala.com">
+    </label>
+    <button type="button" id="addPerson">Add</button>
+</div>
+<ul id='playerList'></ul>
+<script type='module'>
+    import {fetchJson} from "../scripts/utilities/helpers.js";
+
+    const API_URL = '/rest/';
+
+    const textBox = document.querySelector('#newPlayer');
+
+    document.querySelector("button").addEventListener("click", () => {
+        if (!textBox.value) {
+            alert('No value is given');
+            return;
+        }
+        addPerson(textBox.value).then(_ => {
+            textBox.value = '';
+        });
+    });
+
+
+    fetchJson(`${API_URL}players`).then(json => {
+        json['_embedded']['players'].forEach(player => addPlayerToTheList(player));
+    }).catch(error => {
+        console.log(error);
+    });
+
+
+    const addPerson = username =>
+        fetch(`${API_URL}players`, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(username)
+        }).then(response => {
+            if (response.ok) {
+                response.json().then(player => addPlayerToTheList(player));
+                alert('Appointment saved');
+            } else {
+                throw new Error('add person error ' + response.statusText);
+            }
+        });
+
+    const addPlayerToTheList = (player) => {
+        const listItem = document.createElement('li');
+        const listItemText = document.createTextNode(player['username'])
+        listItem.appendChild(listItemText);
+        document.getElementById('playerList').appendChild(listItem);
+    }
+</script>
 </body>
 </html>

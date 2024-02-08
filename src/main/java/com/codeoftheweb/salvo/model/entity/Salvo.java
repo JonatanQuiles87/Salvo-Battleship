@@ -1,4 +1,4 @@
-package com.codeoftheweb.salvo.model;
+package com.codeoftheweb.salvo.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.*;

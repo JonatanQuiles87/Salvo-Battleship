@@ -1,6 +1,6 @@
 package com.codeoftheweb.salvo;
 
-import com.codeoftheweb.salvo.model.*;
+import com.codeoftheweb.salvo.model.entity.*;
 import com.codeoftheweb.salvo.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -420,7 +420,7 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		String[] whiteList = {"/web/games.html", "/scripts/**", "/styles/**", "/rest/**", "/api/games", "/api/login", "/api/players"};
+		String[] whiteList = {"/web/games.html", "/web/game.html", "/scripts/**", "/styles/**", "/rest/**", "/api/games", "/api/players"};
 
 		http.authorizeRequests()
 				.antMatchers(whiteList).permitAll()
@@ -437,7 +437,7 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 		http.csrf().disable();
 
-		http.exceptionHandling().authenticationEntryPoint((req, res, exc) -> res.sendRedirect("/web/games.html")); // While this line exists, the bad credential error is also caught here after FailureHandler and I don't get the unauthorized error, I always get a 302.
+		http.exceptionHandling().authenticationEntryPoint((req, res, exc) -> res.sendError(HttpServletResponse.SC_UNAUTHORIZED));
 
 		http.logout().logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler());
 	}

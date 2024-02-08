@@ -1,25 +1,25 @@
-const domainUrl = 'http://localhost:8080';
+import {fetchJson, logout, showPlayerUsername, loggedInPlayerUsername} from "./utilities/helpers.js";
 
-const fetchJson = url =>
-    fetch(domainUrl + url).then(response => {
-        if (response.ok) {
-            return response.json();
-        } else {
-            throw new Error('error: ' + response.statusText);
-        }
-    });
 const gridSize = 10;
 const shipsGridContainer = document.querySelector('#ships-grid-container');
 const salvoesGridContainer = document.querySelector('#salvoes-grid-container');
+const loggedInPlayerUsernameArea = document.getElementById('logged-in-player');
+const logoutBtn = document.querySelector('#logout-btn');
 shipsGridContainer.setAttribute('style', `grid-template-columns:repeat(${gridSize + 1}, 1fr)`); // To be able to have dynamic grid size in case we want different size of grid.
 salvoesGridContainer.setAttribute('style', `grid-template-columns:repeat(${gridSize + 1}, 1fr)`);
 let rowLetterShip = 'A'; // The beginning letter of the row.
-let rowLetterSalvo = 'A'; // Salvo start letter
+let rowLetterSalvo = 'A';
 
 const params = new Proxy(new URLSearchParams(window.location.search), {
     get: (searchParams, prop) => searchParams.get(prop),
 });
 const gamePlayerId = params['gp'];
+
+if (loggedInPlayerUsername) {
+    showPlayerUsername(loggedInPlayerUsername, loggedInPlayerUsernameArea);
+    logoutBtn.setAttribute('style', 'visibility: visible');
+    logoutBtn.addEventListener('click', () => logout());
+}
 
 createGrids();
 placeDataOnGrids();
@@ -44,8 +44,7 @@ function createColumnHeaders(gridContainer) {
             const gridItemText = document.createTextNode(`${columnNo}`);
             gridItem.appendChild(gridItemText);
         }
-        gridContainer === shipsGridContainer ? shipsGridContainer.appendChild(gridItem)
-        : salvoesGridContainer.appendChild(gridItem);
+        gridContainer === shipsGridContainer ? shipsGridContainer.appendChild(gridItem) : salvoesGridContainer.appendChild(gridItem);
     }
 }
 
@@ -70,6 +69,7 @@ function createRowCells(gridContainer, rowLetter) {
         rowLetterSalvo = nextChar(rowLetterSalvo);
 }
 
+
 function nextChar(c) {
     return String.fromCharCode(c.charCodeAt(0) + 1);
 }
@@ -77,9 +77,9 @@ function nextChar(c) {
 function placeDataOnGrids() {
     if (gamePlayerId !== null) {
         fetchJson(`/api/game_view/${gamePlayerId}`).then((game) => {
-            showGameInfo(game['gamePlayers']);
             placeShipsOnGrid(game['ships']);
-            placeSalvoesOnGrids(game['salvoes'], game['gamePlayers']);
+            showGameInfo(game['gamePlayers']);
+            placeSalvoesOnGrids(game['salvoes'], game['gamePlayers'])
         });
     }
 }
@@ -88,7 +88,11 @@ function placeShipsOnGrid(ships) {
     ships.forEach(ship => {
         ship['shipLocations'].forEach(location => {
             const gridCell = document.querySelector(`#SHIP${location}`);
-            gridCell.setAttribute('style', 'background-color: rgba(12, 25, 25, 0.8)');
+            if(gridCell) {
+                gridCell.setAttribute('style', 'background-color: rgba(12, 25, 25, 0.8)');
+            } else {
+                alert(`The location ${location} is not exist in the grid table. Check you locations.`);
+            }
         });
     });
 }
@@ -105,16 +109,16 @@ function showGameInfo(gamePlayers) {
     gameInfoTextField.appendChild(gameInfoText);
 }
 
-function placeSalvoesOnGrids (salvoes, gamePlayers) {
+function placeSalvoesOnGrids(salvoes, gamePlayers){
     const gamePlayerOwner = gamePlayers.find(({id}) => id.toString() === gamePlayerId);
     const ownerPlayerId = gamePlayerOwner['player']['id'];
     placeOwnerSalvoes(salvoes[ownerPlayerId]);
 
     const gamePlayerOpponent = gamePlayers.find(({id}) => id.toString() !== gamePlayerId);
-        if (gamePlayerOpponent !== undefined) {
-            const opponentPlayerId = gamePlayerOpponent['player']['id'];
-            placeOpponentSalvoes(salvoes[opponentPlayerId]);
-        }
+    if(gamePlayerOpponent !== undefined){
+        const opponentPlayerId = gamePlayerOpponent['player']['id'];
+        placeOpponentSalvoes(salvoes[opponentPlayerId]);
+    }
 }
 
 function placeOwnerSalvoes(ownerSalvoes) {
@@ -124,7 +128,7 @@ function placeOwnerSalvoes(ownerSalvoes) {
         const salvoLocations = ownerSalvo[1];
         salvoLocations.forEach(location => {
             const gridCellInSalvoGrid = document.querySelector(`#SALVO${location}`);
-            gridCellInSalvoGrid.setAttribute('style', 'background-color: rgba(185, 20, 20, 0.8) ; color red');
+            gridCellInSalvoGrid.setAttribute('style', 'background-color: rgba(182, 23, 23, 0.8) ; color: white');
             gridCellInSalvoGrid.innerHTML = turnNumber;
         });
     });
@@ -137,8 +141,9 @@ function placeOpponentSalvoes(opponentSalvoes) {
         const salvoLocations = opponentSalvo[1];
         salvoLocations.forEach(location => {
             const gridCellInOwnerShipGrid = document.querySelector(`#SHIP${location}`);
-            gridCellInOwnerShipGrid.setAttribute('style', 'background-color: rgba(185, 20, 20, 0.8) ; color red');
+            gridCellInOwnerShipGrid.setAttribute('style', 'background-color: rgba(182, 23, 23, 0.8) ; color: white');
             gridCellInOwnerShipGrid.innerHTML = turnNumber;
         });
     });
 }
+

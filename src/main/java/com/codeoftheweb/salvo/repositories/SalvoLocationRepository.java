@@ -1,6 +1,6 @@
 package com.codeoftheweb.salvo.repositories;
 
-import com.codeoftheweb.salvo.model.SalvoLocation;
+import com.codeoftheweb.salvo.model.entity.SalvoLocation;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 

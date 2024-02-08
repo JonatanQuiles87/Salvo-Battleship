@@ -1,4 +1,4 @@
-package com.codeoftheweb.salvo.model;
+package com.codeoftheweb.salvo.model.entity;
 
 import javax.persistence.*;
 import java.text.SimpleDateFormat;
@@ -19,18 +19,18 @@ public class Score {
     @JoinColumn(name = "player_id")
     private Player player;
 
-    @Column(name = "score")
-    private Double score;
+    @Column(name = "scoreNumber")
+    private Double scoreNumber;
 
     @Column(name = "finish_date")
     private Date finishDate;
 
     public Score(){}
 
-    public Score (Game game, Player player, Double score, Date finishDate) {
+    public Score (Game game, Player player, Double scoreNumber, Date finishDate) {
         this.game = game;
         this.player = player;
-        this.score = score;
+        this.scoreNumber = scoreNumber;
         this.finishDate = finishDate;
     }
 
@@ -58,12 +58,12 @@ public class Score {
         this.player = player;
     }
 
-    public Double getScore() {
-        return score;
+    public Double getScoreNumber() {
+        return scoreNumber;
     }
 
-    public void setScore(Double score) {
-        this.score = score;
+    public void setScoreNumber(Double scoreNumber) {
+        this.scoreNumber = scoreNumber;
     }
 
     public String getFinishDate() {

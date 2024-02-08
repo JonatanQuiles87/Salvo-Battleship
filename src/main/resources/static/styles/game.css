@@ -1,6 +1,6 @@
 .grids-container {
     display: flex ;
-    justify-content: space-evenly ;
+    justify-content: space-evenly
 }
 
 .grid-container {
@@ -20,4 +20,10 @@
 
 .info {
     font-size: 20px;
+}
+
+#logged-in-player {
+    text-align: end;
+    background-color: aqua;
+    padding-right: 10px;
 }
