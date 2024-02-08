@@ -17,6 +17,9 @@ public class Player {
     @Column(name = "username", unique = true)
     private String username;
 
+    @Column(name = "password")
+    private String password;
+
     @JsonIgnore
     @OneToMany(mappedBy = "player")
     private Set<GamePlayer> gamePlayers = new HashSet<>();
@@ -29,8 +32,9 @@ public class Player {
 
     }
 
-    public Player(String username) {
+    public Player(String username, String password) {
         this.username = username;
+        this.password = password;
     }
 
 
@@ -45,6 +49,14 @@ public class Player {
     }
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public Set<GamePlayer> getGamePlayers() {
