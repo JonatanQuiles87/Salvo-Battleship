@@ -61,7 +61,7 @@ public class SalvoService {
             Player savedPlayer = this.playerRepository.save(player);
             return new PlayerResponse(savedPlayer.getUsername());
         } catch (DataIntegrityViolationException e) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN,  "error: Name in use" );
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "error: Name in use");
         }
     }
 
@@ -85,7 +85,7 @@ public class SalvoService {
         return gameMap;
     }
 
-    private List<Object> makeMapOfGamePlayers(Set<GamePlayer> gamePlayers) {
+    private List<Map<String, Object>> makeMapOfGamePlayers(Set<GamePlayer> gamePlayers) {
         return gamePlayers.stream()
                 .map(gamePlayer -> {
                     Map<String, Object> gamePlayerMap = new HashMap<>();
@@ -94,6 +94,7 @@ public class SalvoService {
                     gamePlayerMap.put("score", this.getGamePlayerScore(gamePlayer));
                     return gamePlayerMap;
                 })
+                .sorted(Comparator.comparingLong((Map<String, Object> gamePlayerMap) -> (Long) gamePlayerMap.get("id")))// This is purpose sorting username by length of id.
                 .collect(Collectors.toList());
     }
 
