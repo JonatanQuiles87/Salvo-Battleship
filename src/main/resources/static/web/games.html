@@ -1,10 +1,7 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Salvo!</title>
     <link href="../styles/games.css" rel="stylesheet">
     <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
@@ -21,7 +18,7 @@
         </form>
     </div>
 
-    <h4 id="logged-in-player">
+    <h4 id="logged-in-player" style="visibility: hidden">
         <button id="logout-btn" style="visibility: hidden">Logout</button>
     </h4>
 
@@ -32,21 +29,22 @@
 
     <div>
         <h3>Leaderboard</h3>
-        <table class="table table-bordered" style="width: 50%">
+        <table class="table table-bordered leaderboard" style="width: 50%">
             <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Total</th>
-                    <th>Won</th>
-                    <th>Lost</th>
-                    <th>Tied</th>
-                </tr>
+            <tr>
+                <th>Name</th>
+                <th>Total</th>
+                <th>Won</th>
+                <th>Lost</th>
+                <th>Tied</th>
+            </tr>
             </thead>
             <tbody id="leaderboard">
 
             </tbody>
         </table>
     </div>
+</div>
 
 <script src="../scripts/games.js" type="module"></script>
 </body>

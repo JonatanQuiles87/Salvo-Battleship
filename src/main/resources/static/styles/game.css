@@ -1,14 +1,33 @@
+body {
+    background-image: url("../images/BattleShip.jpg");
+    height: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
 .grids-container {
     display: flex ;
-    justify-content: space-evenly
+    justify-content: space-evenly;
+    padding-bottom: 20px;
 }
 
 .grid-container {
     display: inline-grid;
-    /*grid-template-columns: repeat(11, 1fr);*/
-    background-color: #2196F3;
+    background-color: #06508a;
     padding: 10px;
 }
+
+.color-info {
+    background-color: azure;
+    padding-left: 5px;
+}
+
+
+.grid-title {
+    color: darkred;
+}
+
 .grid-item {
     background-color: rgba(250, 250, 250, 0.8);
     border: 1px solid rgba(0, 0, 0, 0.8);
@@ -20,10 +39,10 @@
 
 .info {
     font-size: 20px;
+    color: #06508a;
 }
 
 #logged-in-player {
     text-align: end;
-    background-color: aqua;
     padding-right: 10px;
 }
