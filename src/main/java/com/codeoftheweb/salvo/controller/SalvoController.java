@@ -7,12 +7,13 @@ import com.codeoftheweb.salvo.repositories.GameRepository;
 import com.codeoftheweb.salvo.repositories.PlayerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.validation.Valid;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -26,6 +27,8 @@ public class SalvoController {
     private GamePlayerRepository gamePlayerRepository;
     @Autowired
     private PlayerRepository playerRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @RequestMapping("/games")
     public Map<String, Object> getGamesPageData(Authentication authentication) {
@@ -38,6 +41,19 @@ public class SalvoController {
         mapOfGamesPage.put("player", mappedPlayer);
         mapOfGamesPage.put("games", this.getGames());
         return mapOfGamesPage;
+    }
+
+    @RequestMapping(path = "/api/players", method = RequestMethod.POST)
+    public ResponseEntity<String> signUp(@Valid @RequestBody Player player) {
+        if (player.getUsername().isEmpty() || player.getPassword().isEmpty()) {
+            return new ResponseEntity<>("No name given", HttpStatus.FORBIDDEN);
+        }
+        if (playerRepository.findByUsername(player.getUsername()) != null) {
+            return new ResponseEntity<>("Name already used", HttpStatus.CONFLICT);
+        }
+        player.setPassword(passwordEncoder.encode(player.getPassword()));
+        playerRepository.save(player);
+        return new ResponseEntity<>("Name added", HttpStatus.CREATED);
     }
 
     @RequestMapping("/game_view/{gamePlayerId}")
@@ -132,5 +148,11 @@ public class SalvoController {
                         .stream()
                         .map(SalvoLocation::getGridCell)));
         return mapOfLocations;
+    }
+
+    private Map<String, Object> checkInfo(String key, Object value) {
+        Map<String, Object> map = new HashMap<>();
+        map.put(key, value);
+        return map;
     }
 }

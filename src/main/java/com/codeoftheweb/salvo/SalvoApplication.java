@@ -420,7 +420,7 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		String[] whiteList = {"/web/games.html", "/scripts/**", "/rest/**", "/api/games", "/api/login", "/web/login.html"};
+		String[] whiteList = {"/web/games.html", "/scripts/**", "/rest/**", "/api/games", "/api/login", "/api/players", "/web/login.html"};
 
 		http.authorizeRequests()
 				.antMatchers(whiteList).permitAll()
