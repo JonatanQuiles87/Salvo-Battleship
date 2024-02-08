@@ -4,8 +4,10 @@ package com.codeoftheweb.salvo.controller;
 import com.codeoftheweb.salvo.model.*;
 import com.codeoftheweb.salvo.repositories.GamePlayerRepository;
 import com.codeoftheweb.salvo.repositories.GameRepository;
+import com.codeoftheweb.salvo.repositories.PlayerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,14 +24,22 @@ public class SalvoController {
     private GameRepository gameRepository;
     @Autowired
     private GamePlayerRepository gamePlayerRepository;
+    @Autowired
+    private PlayerRepository playerRepository;
+
     @RequestMapping("/games")
-    private List<Object> getGames() {
-        return gameRepository
-                .findAll()
-                .stream()
-                .map(this::makeGameDTO)
-                .collect(Collectors.toList());
+    public Map<String, Object> getGamesPageData(Authentication authentication) {
+        Map<String, Object> mapOfGamesPage = new HashMap<>();
+        Map<String, Object> mappedPlayer = new HashMap<>();
+        if (authentication != null) {
+            Player authenticatedPlayer = this.getAuthenticatedUser(authentication);
+            mappedPlayer = this.makePlayersDTO(authenticatedPlayer);
+        }
+        mapOfGamesPage.put("player", mappedPlayer);
+        mapOfGamesPage.put("games", this.getGames());
+        return mapOfGamesPage;
     }
+
     @RequestMapping("/game_view/{gamePlayerId}")
     private Map<String, Object> getGameView(@PathVariable Long gamePlayerId) {
         GamePlayer gamePlayer = this.gamePlayerRepository.findById(gamePlayerId)
@@ -42,6 +52,18 @@ public class SalvoController {
         return new TreeMap<>(mapOfGameView);
     }
 
+    private Player getAuthenticatedUser (Authentication authentication) {
+        return this.playerRepository.findByUsername(authentication.getName())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No user found with this username"));
+    }
+
+    private List<Object> getGames() {
+        return gameRepository
+                .findAll()
+                .stream()
+                .map(this::makeGameDTO)
+                .collect(Collectors.toList());
+    }
 
     private Map<String, Object> makeGameDTO(Game game) {
         Map<String, Object> dto = new LinkedHashMap<>();
@@ -62,7 +84,6 @@ public class SalvoController {
         dto.put("id", gamePlayer.getId());
         dto.put("player", makePlayersDTO(gamePlayer.getPlayer()));
         dto.put("score", this.gamePlayerScore(gamePlayer));
-
         return dto;
     }
 
@@ -72,8 +93,6 @@ public class SalvoController {
         dto.put("id", player.getId());
         dto.put("username", player.getUsername());
         return dto;
-
-
     }
 
     private Double gamePlayerScore(GamePlayer gamePlayer) {
@@ -114,5 +133,4 @@ public class SalvoController {
                         .map(SalvoLocation::getGridCell)));
         return mapOfLocations;
     }
-
 }
