@@ -123,15 +123,28 @@ function createButtonBasics(buttonText) {
 }
 
 function viewTheGame(gameId) {
-    const gameClicked = fetchedGamesList.find(game => game['gameId'] === gameId);
-    const gamePlayerOfLoggedInUser = gameClicked['gamePlayers']
+    const gameClickedToView = fetchedGamesList.find(game => game['gameId'] === gameId);
+    const gamePlayerOfLoggedInUser = gameClickedToView['gamePlayers']
         .find(gamePlayer => gamePlayer['player']['username'] === loggedInPlayerUsername);
     const gamePlayerId = gamePlayerOfLoggedInUser['id'];
     window.location.href = `/web/game.html?gp=${gamePlayerId}`;
 }
 
-function joinTheGame() {
-//TODO
+async function joinTheGame() {
+    try{
+        const response = await fetch(`/api/game/${gameId}/players`, {
+            method: 'POST'
+        });
+        if(response.status === 201) {
+            const responseJSON = await response.json();
+            alert('You have joined the game!');
+            window.location.href = `/web/game.html?gp=${responseJSON['gpid']}`;
+        } else {
+            throw new Error('You couldn\'t join the game. Try again later.');
+        }
+    } catch (error) {
+        alert(error.message);
+    }
 }
 
 function createNewGame() {
@@ -141,7 +154,7 @@ function createNewGame() {
         if(response.status === 201) {
             return response.json();
         } else {
-            alert('Game couldn\'t be created! Try again later.)';
+            alert('Game couldn\'t be created! Try again later.');
         }
     }).then(responseJSON => {
         alert('New game is successfully added.');
