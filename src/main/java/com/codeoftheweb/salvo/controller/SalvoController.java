@@ -3,10 +3,12 @@ package com.codeoftheweb.salvo.controller;
 import com.codeoftheweb.salvo.model.dto.PlayerRequest;
 import com.codeoftheweb.salvo.model.dto.PlayerResponse;
 import com.codeoftheweb.salvo.service.SalvoService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.net.URI;
 import java.util.Map;
 
 @RestController
@@ -30,7 +32,12 @@ public class SalvoController {
     }
 
     @PostMapping("/players")
-    public PlayerResponse signUp(@Valid @RequestBody PlayerRequest playerRequest){
+    public PlayerResponse signUp(@Valid @RequestBody PlayerRequest playerRequest) {
         return this.salvoService.signUp(playerRequest);
+    }
+
+    @PostMapping("/games")
+    public ResponseEntity<Map<String, Long>> createGame(Authentication authentication) {
+        return ResponseEntity.created(URI.create("/game_view/id")).body(this.salvoService.createGame(authentication));
     }
 }

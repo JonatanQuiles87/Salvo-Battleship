@@ -41,6 +41,9 @@ public class GamePlayer {
         this.player= player;
     }
 
+    public GamePlayer(Game savedGame, Player authenticatedPlayer, String creationDate) {
+    }
+
 
     public Long getId() {
         return id;
