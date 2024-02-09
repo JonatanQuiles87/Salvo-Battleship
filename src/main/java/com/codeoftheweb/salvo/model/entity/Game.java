@@ -1,10 +1,8 @@
 package com.codeoftheweb.salvo.model.entity;
 
 
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.*;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 
@@ -43,9 +41,8 @@ public class Game {
     }
 
 
-    public String getCreationDate() {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        return sdf.format(creationDate);
+    public Date getCreationDate() {
+        return creationDate;
     }
 
     public void setCreationDate(Date creationDate) {

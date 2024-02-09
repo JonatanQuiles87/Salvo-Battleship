@@ -1,8 +1,8 @@
 package com.codeoftheweb.salvo.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -41,10 +41,6 @@ public class GamePlayer {
         this.player= player;
     }
 
-    public GamePlayer(Game savedGame, Player authenticatedPlayer, String creationDate) {
-    }
-
-
     public Long getId() {
         return id;
     }
@@ -53,9 +49,8 @@ public class GamePlayer {
         this.id = id;
     }
 
-    public String getJoinDate() {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        return dateFormat.format(joinDate);
+    public Date getJoinDate() {
+        return joinDate;
     }
 
     public void setJoinDate(Date joinDate) {
