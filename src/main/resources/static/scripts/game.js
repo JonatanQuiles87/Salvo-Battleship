@@ -1,9 +1,13 @@
-import {fetchJson, logout, showPlayerUsername, loggedInPlayerUsername} from "./utilities/helpers.js";
+import {showPlayerUsername, combineOwnerShipsLocations, nextChar} from "./utilities/helpers.js";
+import {fetchJson, loggedInPlayerUsername} from "./utilities/requestsToApi.js";
+
+import {logout} from "./utilities/authorization.js";
+import {allShipTypes} from "./utilities/constants.js";
 
 const gridSize = 10;
 const shipsGridContainer = document.querySelector('#ships-grid-container');
 const salvoesGridContainer = document.querySelector('#salvoes-grid-container');
-const loggedInPlayerUsernameArea = document.getElementById('logged-in-player');
+const loggedInPlayerUsernameArea = document.getElementById("logged-in-player");
 const logoutBtn = document.querySelector('#logout-btn');
 shipsGridContainer.setAttribute('style', `grid-template-columns:repeat(${gridSize + 1}, 1fr)`); // To be able to have dynamic grid size in case we want different size of grid.
 salvoesGridContainer.setAttribute('style', `grid-template-columns:repeat(${gridSize + 1}, 1fr)`);
@@ -69,17 +73,13 @@ function createRowCells(gridContainer, rowLetter) {
         rowLetterSalvo = nextChar(rowLetterSalvo);
 }
 
-
-function nextChar(c) {
-    return String.fromCharCode(c.charCodeAt(0) + 1);
-}
-
 function placeDataOnGrids() {
     if (gamePlayerId !== null) {
         fetchJson(`/api/game_view/${gamePlayerId}`).then((game) => {
             placeShipsOnGrid(game['ships']);
             showGameInfo(game['gamePlayers']);
             placeSalvoesOnGrids(game);
+            createShipsForms(game);
         });
     }
 }
@@ -109,7 +109,7 @@ function showGameInfo(gamePlayers) {
     gameInfoTextField.appendChild(gameInfoText);
 }
 
-function placeSalvoesOnGrids(game){
+function placeSalvoesOnGrids(game) {
     const gamePlayerOwner = game['gamePlayers'].find(({id}) => id.toString() === gamePlayerId);
     const ownerPlayerId = gamePlayerOwner['player']['id'];
     placeOwnerSalvoes(game['salvoes'][ownerPlayerId]);
@@ -153,10 +153,58 @@ function placeOpponentSalvoes(opponentSalvoes, ownerShips) {
     });
 }
 
-function combineOwnerShipsLocations(ownerShips) {
-    return ownerShips.reduce((combinedLocationsArray, {shipLocations}) => {
-        combinedLocationsArray.push(...shipLocations);
-        return combinedLocationsArray;
-    }, []);
+function createShipsForms(game) {
+    const shipsToPlaceContainer = document.querySelector('.ships-to-place-container');
+
+    const alreadyPlacedShips = game['ships']
+        .map(({shipType}) => shipType.toLowerCase());
+
+    allShipTypes.forEach(ship => {
+        const container = document.createElement('div');
+        container.classList.add('form-check');
+
+        const input = createInput(ship, 'radio');
+        const label = createLabel(ship);
+
+        if (alreadyPlacedShips.includes(ship.name.toLowerCase())) {
+            input.disabled = true;
+            label.setAttribute('style', 'text-decoration: line-through red');
+            createPlacedShipsCheckBoxes(ship);
+        }
+
+        container.appendChild(input);
+        container.appendChild(label);
+        shipsToPlaceContainer.appendChild(container);
+    });
 }
 
+function createInput(ship, type) {
+    const input = document.createElement('input');
+    input.classList.add('form-check-input');
+    input.setAttribute('type', type);
+    input.setAttribute('id', ship.id);
+    if (type === 'radio') {
+        input.setAttribute('name', 'shipsToPlace');
+    }
+    return input;
+}
+
+function createLabel(ship) {
+    const label = document.createElement('label');
+    label.classList.add('form-check-label');
+    label.setAttribute('for', ship.id);
+    label.textContent = `${ship.name} (${'\u25A0 '.repeat(ship.size)})`;
+    return label;
+}
+
+function createPlacedShipsCheckBoxes(ship) {
+    const placedShipsContainer = document.querySelector('.placed-ships-container');
+    const container = document.createElement('div');
+    container.classList.add('form-check');
+    const input = createInput(ship, 'checkbox');
+    const label = createLabel(ship);
+
+    container.appendChild(input);
+    container.appendChild(label);
+    placedShipsContainer.appendChild(container);
+}

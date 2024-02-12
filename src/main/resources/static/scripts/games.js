@@ -1,4 +1,12 @@
-import {login, signup, logout, showPlayerUsername,fetchedGamesObject,  loggedInPlayerUsername} from "./utilities/helpers.js";
+import {showPlayerUsername} from "./utilities/helpers.js";
+import {login, signup, logout} from "./utilities/authorization.js";
+import {
+    createNewGameRequest,
+    fetchedGamesObject,
+    joinGameRequest,
+    loggedInPlayerUsername,
+    sendShips
+} from "./utilities/requestsToApi.js";
 
 const leaderboard = document.querySelector('#leaderboard');
 const gamesList = document.getElementById("games-list");
@@ -13,11 +21,10 @@ const infoAboutGames = document.querySelector('#info-about-games');
 const fetchedGamesList = fetchedGamesObject['games'];
 
 loginBtn.addEventListener('click', evt => login(evt));
-signupBtn.addEventListener('click', evt => signup(evt)); // Normally don't need evt parameter to signup for sending information to a jackson file, but I use this evt for logging automatically after signup.
+signupBtn.addEventListener('click', evt => signup(evt)); // Normally we do not need evt parameter for signup since we are sending the json file to our endpoint but we are also logging in after signing up automatically. This is why we use evt parameter.
+createGameBtn.addEventListener('click', () => createNewGameRequest());
 
-createGameBtn.addEventListener('click', () => createNewGame());
-
-if(loggedInPlayerUsername) {
+if (loggedInPlayerUsername) {
     showPlayerUsername(loggedInPlayerUsername, loggedInPlayerUsernameArea);
     loginForm.remove();
     warningToLogin.remove();
@@ -36,7 +43,7 @@ const briefGameInfo = (games) => {
             'no': index + 1,
             'created-time': formattedDate,
             'first-player': game['gamePlayers'][0]['player']['username'],
-            'second-player': game['gamePlayers'][1]?.['player']?.['username'] || '',
+            'second-player': game['gamePlayers'][1]?.['player']?.['username'] || '', // If there is a game, there must be created time and first player who is the creator but second player might not exist.
             'game-id': game['gameId']
         }
         briefGameInfoList.push(briefGameInfo);
@@ -83,7 +90,7 @@ function createTable(data, tableName) {
         tableRow.appendChild(tableCell);
     });
 
-    if(tableName === gamesList){
+    if (tableName === gamesList) {
         createViewButton(tableRow, data);
         createJoinButton(tableRow, data);
     }
@@ -102,7 +109,7 @@ function createViewButton(tableRow, gameData) {
     button.addEventListener('click', () => viewTheGame(gameId));
 }
 
- function createJoinButton(tableRow, gameData) {
+function createJoinButton(tableRow, gameData) {
     const firstPlayer = gameData['first-player'];
     const secondPlayer = gameData['second-player'];
     const gameId = gameData['game-id'];
@@ -131,10 +138,8 @@ function viewTheGame(gameId) {
 }
 
 async function joinTheGame(gameId) {
-    try{
-        const response = await fetch(`/api/game/${gameId}/players`, {
-            method: 'POST'
-        });
+    try {
+        const response = await joinGameRequest(gameId);
         if(response.status === 201) {
             const responseJSON = await response.json();
             alert('You have joined the game!');
@@ -145,21 +150,6 @@ async function joinTheGame(gameId) {
     } catch (error) {
         alert(error.message);
     }
-}
-
-function createNewGame() {
-    fetch('/api/games', {
-        method: 'POST'
-    }).then(response => {
-        if (response.status === 201) {
-            return response.json();
-        } else {
-            throw new Error('Game couldn\'t be created! Try again later.');
-        }
-    }).then(responseJSON => {
-        alert('New game is successfully added.');
-        window.location.href = `/web/game.html?gp=${responseJSON['gpid']}`;
-    }).catch(error => alert(error.message));
 }
 
 function createPlayerListFromJson(games) {
@@ -206,24 +196,4 @@ function resultCounter(playerUsername, games, resultType) {
         });
         return counter;
     }, 0);
-}
-
-function sendShips(jsonBody) {
-
-    fetch('/api/games/players/12/ships', {
-        method: 'POST',
-        body: jsonBody,
-        headers: new Headers({
-            'Content-Type': 'application/json'
-        })
-    }).then((response) => {
-        if(response.ok && response.status === 201){
-            alert('Ships have been placed');
-            window.location.href = '/web/game.html?gp=12';
-        } else {
-            return response.json().then(error => {
-                throw new Error(error.message);
-            });
-        }
-    }).catch(error => alert(error.message));
 }
