@@ -1,6 +1,7 @@
 package com.codeoftheweb.salvo.core.util;
 
 import com.codeoftheweb.salvo.model.dto.ShipDto;
+import com.codeoftheweb.salvo.model.dto.ShipDtoListWrapper;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -18,14 +19,14 @@ public class ShipValidation {
         shipTypesAndSizes.put("patrol boat", 2);
     }
 
-    public static void areShipTypesAndLocationsValid(List<ShipDto> shipDtoList) {
-        List<String> shipTypesOfShipsDto = getShipTypesOfShipDtoList(shipDtoList);
-        List<List<String>> shipLocationListOfShipDto = getShipLocationsListOfShipDto(shipDtoList);
-        boolean isNumberOfShipsValid = shipDtoList.size() >= 1 && shipDtoList.size() <= 5;
+    public static void areShipTypesAndLocationsValid(ShipDtoListWrapper shipDtoListWrapper) {
+        List<String> shipTypesOfShipsDto = getShipTypesOfShipDtoList(shipDtoListWrapper);
+        List<List<String>> shipLocationListOfShipDto = getShipLocationsListOfShipDto(shipDtoListWrapper);
+        boolean isNumberOfShipsValid = shipDtoListWrapper.getShipDtoList().size() >= 1 && shipDtoListWrapper.getShipDtoList().size() <= 5;
         boolean areAllShipsUnique = areAllShipsUnique(shipTypesOfShipsDto);
         boolean doShipTypesHaveCorrectName = haveShipTypesCorrectName(shipTypesOfShipsDto);
         boolean doShipLocationsHaveCorrectSyntax = hasCorrectShipLocationsSyntax(shipLocationListOfShipDto);
-        boolean doShipsHaveCorrectSize = hasCorrectShipSize(shipDtoList);
+        boolean doShipsHaveCorrectSize = hasCorrectShipSize(shipDtoListWrapper);
         boolean areShipLocationsInConsecutiveOrder = areShipLocationsConsecutive(shipLocationListOfShipDto);
 
         if (!isNumberOfShipsValid) {
@@ -56,12 +57,10 @@ public class ShipValidation {
     public static boolean hasCorrectShipLocationsSyntax(List<List<String>> shipLocationsList) {
         return shipLocationsList.stream()
                 .allMatch(shipLocations -> shipLocations != null && shipLocations.stream()
-                        .allMatch(location -> {
-                            String locationWithoutSpace = location.replaceAll("\\s", "");
-                            return locationWithoutSpace.length() >= 2 &&
-                                    isRowLetterValid(locationWithoutSpace.charAt(0)) &&
-                                    isColNumberValid(locationWithoutSpace.substring(1));
-                        }));
+                        .allMatch(location -> !location.contains(" ") &&
+                                location.length() >= 2 &&
+                                isRowLetterValid(location.charAt(0)) &&
+                                isColNumberValid(location.substring(1))));
     }
 
     public static boolean isRowLetterValid(Character rowLetter) {
@@ -79,8 +78,8 @@ public class ShipValidation {
         }
     }
 
-    public static boolean hasCorrectShipSize(List<ShipDto> shipDtoList) {
-        return shipDtoList.stream()
+    public static boolean hasCorrectShipSize(ShipDtoListWrapper shipDtoListWrapper) {
+        return shipDtoListWrapper.getShipDtoList().stream()
                 .allMatch(shipDto -> {
                     String shipType = shipDto.getShipType();
                     Integer shipLocationsSize = shipDto.getShipLocations().size();
@@ -124,14 +123,14 @@ public class ShipValidation {
         return rowLetters.stream().distinct().count() <= 1;
     }
 
-    public static List<String> getShipTypesOfShipDtoList(List<ShipDto> shipDtoList) {
-        return shipDtoList.stream()
+    public static List<String> getShipTypesOfShipDtoList(ShipDtoListWrapper shipDtoListWrapper) {
+        return shipDtoListWrapper.getShipDtoList().stream()
                 .map(ShipDto::getShipType)
                 .collect(Collectors.toList());
     }
 
-    public static List<List<String>> getShipLocationsListOfShipDto(List<ShipDto> shipDtoList) {
-        return shipDtoList.stream()
+    public static List<List<String>> getShipLocationsListOfShipDto(ShipDtoListWrapper shipDtoListWrapper) {
+        return shipDtoListWrapper.getShipDtoList().stream()
                 .map(ShipDto::getShipLocations)
                 .collect(Collectors.toList());
     }
