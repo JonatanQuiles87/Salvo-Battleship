@@ -1,8 +1,8 @@
 import {showPlayerUsername, combineShipsLocations, nextChar} from "./utilities/helpers.js";
-import {fetchGameViewObject, loggedInPlayerUsername} from "./utilities/requestsToApi.js";
+import {fetchGameViewObject, sendShips, loggedInPlayerUsername} from "./utilities/requestsToApi.js";
 
 import {logout} from "./utilities/authorization.js";
-import {allShipTypes} from "./utilities/constants.js";
+import {allShipTypes} from "./utilities/constants.js"
 
 const gridSize = 10;
 const lastLetterInMap = String.fromCharCode(65 + gridSize - 1); // Because charcode return array is also zero indexed, we need to subtract 1.
@@ -330,11 +330,11 @@ function updateRemoveAndSaveButtons() {
     saveShipButton.disabled = !isAnyShipChecked;
 }
 
-removeShipButton.addEventListener('click', removeCheckedShip);
+removeShipButton.addEventListener('click', removeCheckedShips);
 
-function removeCheckedShip() {
-    const checkedShipIds = getCheckedShipIds();
-    checkedShipIds.forEach(shipId => {
+function removeCheckedShips() {
+    const checkedShipsIds = getCheckedShipsIds();
+    checkedShipsIds.forEach(shipId => {
         removeShipFromCheckboxShipList(shipId);
         enableShipOnRadioShipList(shipId);
         removeShip(shipId);
@@ -342,7 +342,7 @@ function removeCheckedShip() {
     });
 }
 
-function getCheckedShipIds() {
+function getCheckedShipsIds() {
     const checkboxes = placedShipsContainer.querySelectorAll('input[type="checkbox"]');
     return Array.from(checkboxes)
         .filter(checkbox => checkbox.checked)
@@ -380,6 +380,17 @@ function deleteShipFromMap(locationsShipObjectToRemove){
         gridCell.setAttribute('style', 'background-color: lightgray');
     });
 }
+
+saveShipButton.addEventListener('click', saveCheckedShips);
+
+function saveCheckedShips(){
+    const checkedShipsIds = getCheckedShipsIds();
+    const checkedShipObjects = checkedShipsIds.map(shipId => allShipTypes.find(ship => ship.id === shipId).name)
+        .map(shipName => shipObjectListPlacedByUser.find(shipObject => shipObject['shipType'] === shipName));
+    const requestBody = {shipDtoList: checkedShipObjects};
+    sendShips(requestBody, gamePlayerId);
+}
+
 
 function handleSalvoGridItemClick() {
     console.log('Salvo grid item click handled');
