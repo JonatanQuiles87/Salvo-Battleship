@@ -16,7 +16,7 @@ export const fetchedGamesObject = await fetchJson('/api/games'); //Top level awa
 
 export const loggedInPlayerUsername = fetchedGamesObject['player']['username'];
 
-export function fetchedGameViewObject (gamePlayerId) {
+export function fetchGameViewObject (gamePlayerId) {
     return fetchJson(`/api/game_view/${gamePlayerId}`);
 }
 
