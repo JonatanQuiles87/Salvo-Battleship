@@ -39,7 +39,7 @@ public class SalvoService {
 
     public Map<String, Object> getGamesPageData(Authentication authentication) {
         Map<String, Object> mapOfGamesPage = new HashMap<>();
-        Map<String,Object> mappedPlayer = new HashMap<>();
+        Map<String, Object> mappedPlayer = new HashMap<>();
         if (authentication != null) {
             Player authenticatedPlayer = this.getAuthenticatedUser(authentication);
             mappedPlayer = this.makePlayerMap(authenticatedPlayer);
@@ -61,7 +61,7 @@ public class SalvoService {
             mapOfGameView.put("salvoes", this.createSalvoesOfGameForEachPlayer(gamePlayer));
             return new TreeMap<>(mapOfGameView);
         } else {
-            throw  new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are not allowed to see this games details.");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are not allowed to see this games details.");
         }
     }
 
@@ -97,8 +97,7 @@ public class SalvoService {
                 throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Game is full!");
             } else if (isPlayerAlreadyInTheGame(gameRequestedToJoin, authenticatedPlayer.getUsername())) {
                 throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are already in this game");
-            }
-            else {
+            } else {
                 return this.createGamePlayer(gameRequestedToJoin, authenticatedPlayer, new Date());
             }
         } else {
@@ -107,14 +106,6 @@ public class SalvoService {
     }
 
     public void placeShips(Long gamePlayerId, ShipDtoListWrapper shipDtoListWrapper, Authentication authentication) {
-        // TODO ship overlap check
-        // check if shipType or shipLocations null
-        try {
-            ShipValidation.areShipTypesAndLocationsValid(shipDtoListWrapper);
-        } catch (IllegalArgumentException e){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-        }
-
         GamePlayer gamePlayer = this.gamePlayerRepository.findById(gamePlayerId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "There is no GamePlayer found with this id."));
 
@@ -124,6 +115,11 @@ public class SalvoService {
         }
         if (!gamePlayer.getShips().isEmpty()) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You already have ships placed.");
+        }
+        try {
+            ShipValidation.areShipTypesAndLocationsValid(shipDtoListWrapper);
+        } catch (IllegalArgumentException e){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
         shipDtoListWrapper.getShipDtoList().forEach(shipDto -> {
             Ship savedShip = this.saveAndReturnShip(shipDto, gamePlayer);
