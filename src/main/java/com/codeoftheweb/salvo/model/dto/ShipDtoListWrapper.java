@@ -10,20 +10,20 @@ public class ShipDtoListWrapper {
     @Valid
     @NotNull
     @NotEmpty
-    private List<ShipDto> shipDtoList;
+    private List<ShipDto> ships;
 
     public ShipDtoListWrapper() {
     }
 
-    public ShipDtoListWrapper(@Valid @NotNull @NotEmpty List<ShipDto> shipDtoList) {
-        this.shipDtoList = shipDtoList;
+    public ShipDtoListWrapper(@Valid @NotNull @NotEmpty List<ShipDto> ships) {
+        this.ships = ships;
     }
 
-    public List<ShipDto> getShipDtoList() {
-        return shipDtoList;
+    public List<ShipDto> getShips() {
+        return ships;
     }
 
-    public void setShipDtoList(List<ShipDto> shipDtoList) {
-        this.shipDtoList = shipDtoList;
+    public void setShips(List<ShipDto> ships) {
+        this.ships = ships;
     }
 }
