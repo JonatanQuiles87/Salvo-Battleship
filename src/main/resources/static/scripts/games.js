@@ -1,4 +1,4 @@
-import {login, signup, logout, showPlayerUsername, fetchedGamesObject, loggedInPlayerUsername} from "./utilities/helpers.js";
+import {login, signup, logout, showPlayerUsername,fetchedGamesObject,  loggedInPlayerUsername} from "./utilities/helpers.js";
 
 const leaderboard = document.querySelector('#leaderboard');
 const gamesList = document.getElementById("games-list");
@@ -130,7 +130,7 @@ function viewTheGame(gameId) {
     window.location.href = `/web/game.html?gp=${gamePlayerId}`;
 }
 
-async function joinTheGame() {
+async function joinTheGame(gameId) {
     try{
         const response = await fetch(`/api/game/${gameId}/players`, {
             method: 'POST'
@@ -151,14 +151,14 @@ function createNewGame() {
     fetch('/api/games', {
         method: 'POST'
     }).then(response => {
-        if(response.status === 201) {
+        if (response.status === 201) {
             return response.json();
         } else {
             alert('Game couldn\'t be created! Try again later.');
         }
     }).then(responseJSON => {
         alert('New game is successfully added.');
-        window.location.href = `/web/game.html?gp=${responseJSON['gpid']}`
+        window.location.href = `/web/game.html?gp=${responseJSON['gpid']}`;
     });
 }
 
@@ -206,4 +206,24 @@ function resultCounter(playerUsername, games, resultType) {
         });
         return counter;
     }, 0);
+}
+
+function sendShips(jsonBody) {
+
+    fetch('/api/games/players/12/ships', {
+        method: 'POST',
+        body: jsonBody,
+        headers: new Headers({
+            'Content-Type': 'application/json'
+        })
+    }).then((response) => {
+        if(response.ok && response.status === 201){
+            alert('Ships are in');
+            window.location.href = '/web/game.html?gp=12';
+        } else {
+            return response.json().then(error => {
+                throw new Error(error.message);
+            });
+        }
+    }).catch(error => alert(error.message));
 }
