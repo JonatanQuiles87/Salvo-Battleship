@@ -2,6 +2,7 @@ package com.codeoftheweb.salvo.controller;
 
 import com.codeoftheweb.salvo.model.dto.PlayerRequest;
 import com.codeoftheweb.salvo.model.dto.PlayerResponse;
+import com.codeoftheweb.salvo.model.dto.SalvoDto;
 import com.codeoftheweb.salvo.model.dto.ShipDtoListWrapper;
 import com.codeoftheweb.salvo.service.SalvoService;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.net.URI;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -56,5 +58,10 @@ public class SalvoController {
     public ResponseEntity<Void> placeShips(@PathVariable Long gamePlayerId, @Valid @RequestBody ShipDtoListWrapper shipDtoListWrapper, Authentication authentication) {
         this.salvoService.placeShips(gamePlayerId, shipDtoListWrapper, authentication);
         return ResponseEntity.created(URI.create("game_view/gamePlayerId")).build();
+    }
+
+    @GetMapping("/games/players/{gamePlayerId}/salvoes")
+    public List<SalvoDto> getOwnerSalvoes(@PathVariable Long gamePlayerId, Authentication authentication) {
+        return this.salvoService.getOwnerSalvoes(gamePlayerId, authentication);
     }
 }

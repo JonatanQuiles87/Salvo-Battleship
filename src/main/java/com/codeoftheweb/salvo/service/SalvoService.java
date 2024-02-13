@@ -1,10 +1,8 @@
 package com.codeoftheweb.salvo.service;
 
+import com.codeoftheweb.salvo.core.helper.ObjectExistence;
 import com.codeoftheweb.salvo.core.util.ShipValidation;
-import com.codeoftheweb.salvo.model.dto.PlayerRequest;
-import com.codeoftheweb.salvo.model.dto.PlayerResponse;
-import com.codeoftheweb.salvo.model.dto.ShipDto;
-import com.codeoftheweb.salvo.model.dto.ShipDtoListWrapper;
+import com.codeoftheweb.salvo.model.dto.*;
 import com.codeoftheweb.salvo.model.entity.*;
 import com.codeoftheweb.salvo.repositories.*;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -25,15 +23,18 @@ public class SalvoService {
     private final PlayerRepository playerRepository;
     private final ShipRepository shipRepository;
     private final ShipLocationRepository shipLocationRepository;
+    private final ObjectExistence objectExistence;
     private final PasswordEncoder passwordEncoder;
 
-    public SalvoService(GameRepository gameRepository, GamePlayerRepository gamePlayerRepository,
-                        PlayerRepository playerRepository, ShipRepository shipRepository, ShipLocationRepository shipLocationRepository, PasswordEncoder passwordEncoder) {
+    public SalvoService(GameRepository gameRepository, GamePlayerRepository gamePlayerRepository, PlayerRepository playerRepository,
+                        ShipRepository shipRepository, ShipLocationRepository shipLocationRepository,
+                        ObjectExistence objectExistence, PasswordEncoder passwordEncoder) {
         this.gameRepository = gameRepository;
         this.gamePlayerRepository = gamePlayerRepository;
         this.playerRepository = playerRepository;
         this.shipRepository = shipRepository;
         this.shipLocationRepository = shipLocationRepository;
+        this.objectExistence = objectExistence;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -50,8 +51,7 @@ public class SalvoService {
     }
 
     public Map<String, Object> getGameView(Long gamePlayerId, Authentication authentication) {
-        GamePlayer gamePlayer = this.gamePlayerRepository.findById(gamePlayerId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "There is no GamePlayer found with this id."));
+        GamePlayer gamePlayer = this.objectExistence.checkIfGamePlayerExistAndReturn(gamePlayerId);
         boolean isPlayerAuthorized = authentication != null && this.isPlayerAuthenticatedForTheGame(gamePlayerId, authentication);
         if (isPlayerAuthorized) {
             Game game = gamePlayer.getGame();
@@ -106,11 +106,10 @@ public class SalvoService {
     }
 
     public ShipDtoListWrapper getShips(Long gamePlayerId, Authentication authentication) {
-        GamePlayer gamePlayer = this.gamePlayerRepository.findById(gamePlayerId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "There is no GamePlayer found with this id."));
+        GamePlayer gamePlayer = this.objectExistence.checkIfGamePlayerExistAndReturn(gamePlayerId);
         boolean isPlayerAuthorizedToGetShips = authentication != null && this.isPlayerAuthenticatedForTheGame(gamePlayerId, authentication);
         if (!isPlayerAuthorizedToGetShips) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are not authorized to place ships.");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are not authorized to get ships.");
         } else {
             List<ShipDto> ships = this.createShipListOfPlayer(gamePlayer.getShips());
             return new ShipDtoListWrapper(ships);
@@ -118,9 +117,7 @@ public class SalvoService {
     }
 
     public void placeShips(Long gamePlayerId, ShipDtoListWrapper shipDtoListWrapper, Authentication authentication) {
-        GamePlayer gamePlayer = this.gamePlayerRepository.findById(gamePlayerId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "There is no GamePlayer found with this id."));
-
+        GamePlayer gamePlayer = this.objectExistence.checkIfGamePlayerExistAndReturn(gamePlayerId);
         boolean isPlayerAuthorizedToPlaceShips = authentication != null && this.isPlayerAuthenticatedForTheGame(gamePlayerId, authentication);
         boolean tryingToPlaceExistingShip = isThereAnyShipAlreadyPlaced(shipDtoListWrapper, gamePlayer);
         if (!isPlayerAuthorizedToPlaceShips) {
@@ -139,6 +136,16 @@ public class SalvoService {
             shipDto.getShipLocations()
                     .forEach(gridCell -> this.saveShipLocation(savedShip, gridCell));
         });
+    }
+
+    public List<SalvoDto> getOwnerSalvoes(Long gamePlayerId, Authentication authentication) {
+        GamePlayer gamePlayer = this.objectExistence.checkIfGamePlayerExistAndReturn(gamePlayerId);
+        boolean isPlayerAuthorizedToGetShips = authentication != null && this.isPlayerAuthenticatedForTheGame(gamePlayerId, authentication);
+        if (!isPlayerAuthorizedToGetShips) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "You are not authorized to get salvoes.");
+        } else {
+            return this.createSalvoTurnsAndLocations(gamePlayer.getSalvoes());
+        }
     }
 
     private Ship saveAndReturnShip(ShipDto shipDto, GamePlayer gamePlayer) {
@@ -254,12 +261,15 @@ public class SalvoService {
         return mapOfSalvoes;
     }
 
-    private Map<Integer, Object> createSalvoTurnsAndLocations(Set<Salvo> salvoes) {
-        Map<Integer, Object> mapOfLocations = new HashMap<>();
-        salvoes.forEach(salvo ->
-                mapOfLocations.put(salvo.getTurnNumber(), salvo.getSalvoLocations()
-                        .stream()
-                        .map(SalvoLocation::getGridCell)));
-        return mapOfLocations;
+    private List<SalvoDto> createSalvoTurnsAndLocations(Set<Salvo> salvoes) {
+        return salvoes.stream()
+                .map(salvo -> {
+                    Integer turnNumber = salvo.getTurnNumber();
+                    List<String> salvoLocations = salvo.getSalvoLocations()
+                            .stream()
+                            .map(SalvoLocation::getGridCell)
+                            .collect(Collectors.toList());
+                    return new SalvoDto(turnNumber, salvoLocations);
+                }).collect(Collectors.toList());
     }
 }
