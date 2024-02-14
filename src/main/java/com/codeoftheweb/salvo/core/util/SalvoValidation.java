@@ -5,6 +5,7 @@ import com.codeoftheweb.salvo.model.entity.GamePlayer;
 import com.codeoftheweb.salvo.model.entity.Salvo;
 import com.codeoftheweb.salvo.model.entity.SalvoLocation;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -19,8 +20,8 @@ public class SalvoValidation {
         if (gamePlayer.getShips().size() < 5) {
             throw new IllegalStateException("First save all your ships, then submit your salvo.");
         }
-        if (hasSalvoBeenPlacedThisTurn(gamePlayer, salvoDto)) {
-            throw new IllegalStateException("You have already sent your salvo, wait for next turn.");
+        if(!isTurnNumberCorrect(gamePlayer, salvoDto)){
+            throw new IllegalStateException("Wrong turn number.");
         }
     }
 
@@ -36,13 +37,18 @@ public class SalvoValidation {
         }
     }
 
-    public static boolean hasSalvoBeenPlacedThisTurn(GamePlayer gamePlayer, SalvoDto salvoDto) {
+    public static boolean isTurnNumberCorrect(GamePlayer gamePlayer, SalvoDto salvoDto){
         Integer turnNumberRequested = salvoDto.getTurnNumber();
+        System.out.println("turnNumberRequested" + turnNumberRequested);
         List<Integer> alreadyPlayedTurns = gamePlayer.getSalvoes()
                 .stream()
                 .map(Salvo::getTurnNumber)
                 .collect(Collectors.toList());
-        return alreadyPlayedTurns.contains(turnNumberRequested);
+        if(alreadyPlayedTurns.isEmpty()){
+            return turnNumberRequested == 1;
+        } else {
+            return turnNumberRequested == Collections.max(alreadyPlayedTurns) + 1;
+        }
     }
 
     public static boolean hasSalvoDuplicatedLocation(SalvoDto salvoDto, GamePlayer gamePlayer) {
@@ -53,7 +59,7 @@ public class SalvoValidation {
                 .collect(Collectors.toSet());
         List<String> requestedSalvoLocations = salvoDto.getSalvoLocations().stream()
                 .map(String::toLowerCase)
-                .toList();
+                .collect(Collectors.toList());
         Set<String> combinedSalvoLocations = new HashSet<>(existingSalvoLocations);
         combinedSalvoLocations.addAll(requestedSalvoLocations);
         return combinedSalvoLocations.size() < salvoDto.getSalvoLocations().size() + existingSalvoLocations.size();
