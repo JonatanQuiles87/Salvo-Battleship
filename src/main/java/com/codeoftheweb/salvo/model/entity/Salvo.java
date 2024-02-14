@@ -1,9 +1,10 @@
 package com.codeoftheweb.salvo.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "salvoes")
@@ -21,7 +22,7 @@ public class Salvo {
 
     @JsonIgnore
     @OneToMany(mappedBy = "salvo")
-    private List<SalvoLocation> salvoLocations = new ArrayList<>();
+    private Set<SalvoLocation> salvoLocations = new HashSet<>();
 
     public Salvo(){
     }
@@ -54,11 +55,11 @@ public class Salvo {
         this.turnNumber = turnNumber;
     }
 
-    public List<SalvoLocation> getSalvoLocations() {
+    public Set<SalvoLocation> getSalvoLocations() {
         return salvoLocations;
     }
 
-    public void setSalvoLocations(List<SalvoLocation> salvoLocations) {
+    public void setSalvoLocations(Set<SalvoLocation> salvoLocations) {
         this.salvoLocations = salvoLocations;
     }
 }
