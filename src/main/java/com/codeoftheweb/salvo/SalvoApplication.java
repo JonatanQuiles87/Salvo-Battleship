@@ -42,7 +42,7 @@ public class SalvoApplication extends SpringBootServletInitializer {
 	@Bean
 	public CommandLineRunner initData(PlayerRepository playerRepository, GameRepository gameRepository, GamePlayerRepository gamePlayerRepository, ShipRepository shipRepository, ShipLocationRepository shipLocationRepository, SalvoRepository salvoRepository, SalvoLocationRepository salvoLocationRepository, ScoreRepository scoreRepository) {
 		return (args) -> {
-			// Players
+		/*	// Players
 			Player player1 = new Player("j.bauer@ctu.gov", passwordEncoder().encode("24"));
 			Player player2 = new Player("c.obrian@ctu.gov", passwordEncoder().encode("42"));
 			Player player3 = new Player("kim_bauer@gmail.com", passwordEncoder().encode("kb"));
@@ -393,7 +393,7 @@ public class SalvoApplication extends SpringBootServletInitializer {
 			scores.add(new Score(game3, player4, 0.0, Date.from(new Date().toInstant().plusSeconds(5400))));
 			scores.add(new Score(game4, player2, 0.5, Date.from(new Date().toInstant().plusSeconds(7200))));
 			scores.add(new Score(game4, player1, 0.5, Date.from(new Date().toInstant().plusSeconds(7200))));
-			scoreRepository.saveAll(scores);
+			scoreRepository.saveAll(scores);*/
 		};
 	}
 }
