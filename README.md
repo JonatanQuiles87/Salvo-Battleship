@@ -85,7 +85,7 @@ The application will be accessible at localhost:8080. Go to http://localhost:808
 
 ## Testing API points
 
-For testing pursoses, you will been able in main file SalvoApplication, you will uncomment the grey section to activate sample data tested.
+For testing pursoses, you will been able in main file SalvoApplication, you will uncomment the grey section with /* and */ to activate sample data tested.
 
 The API point for test are: 
 
